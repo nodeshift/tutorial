@@ -337,7 +337,7 @@ You can now connect to Prometheus at the following address:
 
 This should show the following screen:
 ![prometheus-dashboard](./resources/prometheus-dashboard.png)
-Prometheus will be automatically collecting data from your Kitura application, allowing you to create graphs of your data.
+Prometheus will be automatically collecting data from your Express.js application, allowing you to create graphs of your data.
 
 To build your first graph, type `os_cpu_used_ratio` into the **Expression** box and click on the **Graph** tab:
 
