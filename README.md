@@ -21,10 +21,9 @@ At the end you'll have a fully functioning application running as a cluster in K
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. [Node.js 6.0 or later](https://nodejs.org/en/download/)
+1. [Node.js 8 or later](https://nodejs.org/en/download/)
 2. Your IDE of choice
-3. The [Express.js Generator](http://expressjs.com/en/starter/generator.html)
-4. [Docker for Desktop](https://www.docker.com/products/docker-desktop)
+3. [Docker for Desktop](https://www.docker.com/products/docker-desktop)
 
 ## Setting up
 
@@ -87,9 +86,10 @@ Use the following steps to create your Express.js application:
    mkdir nodeserver
    cd nodeserver
    ```
-2. Run the Express generator to build a skeleton application
+2. Globally install and run the Express generator to build a skeleton application
 
    ```sh
+   npm install --global express-generator
    express
    ```
    
@@ -97,14 +97,10 @@ This has built a simple Express.js application called `nodeserver`, after the na
 
 Next install your applications dependencies and start your application:
 
-1. Install your applications NPM dependencies:
+1. Install  and start your applications NPM dependencies:
    
    ```sh
    npm install
-   ```
-2. Start your application:
-
-   ```sh
    npm start
    ```
 
