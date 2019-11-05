@@ -86,7 +86,12 @@ Use the following steps to create your Express.js application:
    mkdir nodeserver
    cd nodeserver
    ```
-2. Globally install and run the Express generator to build a skeleton application
+2. Run the application generator with the npx command (available in Node.js 8.2.0).
+
+   `npx express-generator`
+
+
+For earlier Node versions, globally install and run the Express generator to build a skeleton application
 
    ```sh
    npm install --global express-generator
