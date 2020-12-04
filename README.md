@@ -1,82 +1,157 @@
-# Building a Cloud Ready Express.js Application
+# Node.js in the Cloud
 
-This workshop shows you how to take a Node.js application and make it "cloud ready": adding support for Cloud Native Computing Foundation (CNCF) technologies using the package and templates provided by the CloudNativeJS project.
+Welcome :wave: to the Node.js in the Cloud workshop!
 
-In this self-paced tutorial, you will:
+The workshop will be in two parts:
+  1. [Extending an application to leverage cloud capabilities]()
+  2. [Tools to accelerate cloud-native development]()
 
-* Create an Express.js application
-* Add Health Checks and Metrics to your application
+## Part 1: Extending an application to leverage cloud capabilities
+
+### Building a Cloud-Ready Express.js Application
+
+This will show you how to take a Node.js application and make it "cloud-ready": adding support for Cloud Native Computing Foundation (CNCF) technologies using the package and templates provided by the [NodeShift](https://nodeshift.dev/) project.
+
+In this self-paced tutorial, you will start with an Express.js application and:
+
+* Add health checks
+* Add metrics to your application
 * Build your application with Docker
 * Package your application with Helm
 * Deploy your application to Kubernetes
 * Monitor your application using Prometheus
 
-The application you'll use is a simple Express.js app built using the Express Generator.
+The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana. At the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
-You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana.
-
-At the end you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
-
-## Prerequisites
+### Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. [Node.js 8 or later](https://nodejs.org/en/download/)
-2. Your IDE of choice
-3. [Docker for Desktop](https://www.docker.com/products/docker-desktop)
+1. [Node.js 14](https://nodejs.org/en/download/) or using [nvm](https://github.com/nvm-sh/nvm#installation-and-update)
+2. Visual Studio Code
+3. Docker and Kubernetes
+   - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
+   - ***On Linux***: Docker for Desktop is not available, follow the docker for linux instructions below and Kubernetes alternatives are:
+    - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+    - [microk8s](https://microk8s.io/#quick-start)
+4. Helm v3 - https://helm.sh/docs/intro/install/
+   - **Note**: This workshop tested with Helm v3.1.2
 
-## Setting up
+### Setting up
 
-### Enabling Kubernetes in Docker for Desktop
+How to start Kubernetes will depend on how you intend to run it.
 
-Ensure you have installed Docker for Desktop on your Mac and enabled Kubernetes within the app. To do so:
+#### Starting Kubernetes
+
+#### `Docker for Desktop`
+
+Ensure you have installed Docker for Desktop and enabled Kubernetes within the application. To do so:
+
+On macOS:
+1. Select the Docker icon in the Menu Bar
+2. Click `Preferences/Settings > Kubernetes Tab > Enable Kubernetes`.
+
+On Windows:
+1. Select the Docker icon in the notifiation area of the taskbar.
+2. Click `Settings > Kubernetes Tab > Enable Kubernetes`.
+
+It will take a few moments to install and start-up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
 
 1. Select the Docker icon in the Menu Bar
-2. Click Preferences > Kubernetes Tab > Enable Kubernetes.
+2. Click `Kubernetes` and select the `docker-for-desktop` context
 
-It will take a few moments to install and start up, but when the indicator light in the bottom right corner is green, you're ready to go!
+#### Docker on linux
 
-If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+<details>
+Install Docker Engine Community using
 
-1. Select the Docker icon in the Menu Bar
-2. Click Kubernetes and select the `docker-for-desktop` context
+```sh
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+```
 
-### Installing Helm
+More information can be found at https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+Add the user to the docker group (optional for part 1, required for part 2 and 3)
+
+```sh
+sudo groupadd docker
+sudo gpasswd -a $USER docker
+sudo service docker restart
+```
+
+Install docker compose
+
+```sh
+sudo apt install docker-compose
+```
+
+</details>
+
+#### `microk8s`
+
+<details>
+
+```sh
+snap install --channel 1.14/stable microk8s --classic
+sudo usermod -a -G microk8s ibmuser
+sudo microk8s.start
+sudo snap alias microk8s.kubectl kubectl
+export PATH=/snap/bin:$PATH
+sudo microk8s.config >~/.kube/config
+microk8s.enable dns registry
+```
+
+You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
+
+**Note**: The Prometheus Helm chart is
+[not compatible](https://github.com/helm/charts/pull/17268) with
+Kubernetes 1.16, so make sure to install 1.14.
+
+</details>
+
+#### `minikube`
+
+//TODO: update for latest minikube
+
+<details>
+
+```sh
+minikube start --kubernetes-version=1.14.7
+eval $(minikube docker-env)
+```
+
+**Note** that the Prometheus Helm chart is
+[not compatible](https://github.com/helm/charts/pull/17268) with
+Kubernetes 1.16, so make sure to run with 1.14.7.
+</details>
+
+#### Installing Helm
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
 **Using a Package Manager:**
 
-* macOS with Homebrew: `brew install kubernetes-helm`
-* Linux with Snap: `sudo snap install helm`
+* macOS with Homebrew: `brew install helm`
+* Linux with Snap: `sudo snap install helm --classic`
 * Windows with Chocolatey: `choco install kubernetes-helm`
 
 **Using a Script:**
 
 ```sh
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
-chmod 700 get_helm.sh
-./get_helm.sh
+$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+$ chmod 700 get_helm.sh
+$ ./get_helm.sh
 ```
-
-Once you have Helm ready, you can initialize the local CLI and also install Tiller into your configured Kubernetes cluster in one step:
-
-```sh
-helm init
-```
-
-This will install Tiller into the Kubernetes cluster, which controls the deployment of your Helm charts.
 
 Now that Helm is installed, you should also configure access to the "stable" Helm repository as follows:
 
 ```sh
 helm repo add stable https://kubernetes-charts.storage.googleapis.com
 ```
+
 This makes it easy for you to install a number of applications and services into your Kubernetes cluster. You'll use this to install Prometheus and Grafana later in the workshop.
 
-## 1. Create your Express.js Application
-
-The `express-generator` package enables you to quickly create an application skeleton. The `express-generator` package installs the `express` command-line tool which you'll use to build you app.
+### 1. Create your Express.js Application
 
 Use the following steps to create your Express.js application:
 
@@ -86,96 +161,99 @@ Use the following steps to create your Express.js application:
    mkdir nodeserver
    cd nodeserver
    ```
-2. Run the application generator with the npx command (available in Node.js 8.2.0).
+
+2. Run the Express generator to build your skeleton application:
 
    ```sh
-   npx express-generator
+   npx express-generator --view=ejs
+   npm version 1.0.0
    ```
-   
+
 This has built a simple Express.js application called `nodeserver`, after the name of the directory you are in.
 
-Next install your applications dependencies and start your application:
+3. Express.js output still uses `var`, so let's update the code syntax using `standard`:
 
-1. Install  and start your applications NPM dependencies:
-   
    ```sh
-   npm install
-   npm start
+   npx standard --fix
    ```
 
-Your application should now be visible at the following URL: [http://localhost:3000](http://localhost:3000)
+4. Install your applications dependencies and start your application:
 
-## 2. Add Health Checks to your Application
+    ```sh
+    npm install
+    npm start
+    ```
 
-Kubernetes, and a number of other cloud deployment technologies, provide "Health Checking" as a system that allows the cloud deployment technology to monitor the deployed application and to take action should the application fail or report itself as "un-healthy".
+Your application should now be visible at [http://localhost:3000](http://localhost:3000).
 
-The simplest form of Health Check is process level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is un-responsive, or where it would be desirable to restart the application for other reasons (such as low memory availability due to a memory leak).
+### 2. Add Health Checks to your Application
+
+Kubernetes, and a number of other cloud deployment technologies, provide "Health Checking" as a system that allows the cloud deployment technology to monitor the deployed application and to take action should the application fail or report itself as "unhealthy".
+
+The simplest form of Health Check is process level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is un-responsive, or where it would be desirable to restart the application for other reasons.
 
 The next level of Health Check is HTTP based, where the application exposes a "livenessProbe" URL endpoint that Kubernetes can make requests of in order to determine whether the application is running and responsive. Additionally, the request can be used to drive self-checking capabilities in the application.
 
-The `@cloudnative/health-connect` package provides a Connect Middleware that makes it easy to add a default health check endpoint and provides a Promise based API for adding self-checking capabilities.
-
 Add a Health Check endpoint to your Express.js application using the following steps:
 
-1. Add the `@cloudnative/health-connect` dependency to your project
-   
-   ```sh
-   npm install @cloudnative/health-connect
-   ```
-
-2. 	Set up a HealthChecker in `app.js`:
+1. Register a Liveness endpoint in `app.js`:
 
    ```js
-   const health = require('@cloudnative/health-connect');
-   let healthcheck = new health.HealthChecker();
+   app.get("/healthz", (req, res) => res.status(200).json({ status: "ok" }));
    ```
-   
-3. Register a Liveness endpoint in app.js:
 
-   ```js
-   app.use('/health', health.LivenessEndpoint(healthcheck))
-   ```
-   
-This has added a '/health' endpoint to your application. As no liveness checks are registered, this will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
+ Add this line after the `app.use('/users', usersRouter);` line but before the 404 catch handler. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
-Check that your livenessProbe Health Check endpoint is running:
+Check that your `livenessProbe` Health Check endpoint is running:
 
 1. Start your application:
 
    ```sh
    npm start
    ```
-2. Visit the `health` endpoint:
 
-   [http://localhost:3000/health](http://localhost:3000/health)
+2. Visit the `healthz` endpoint [http://localhost:3000/healthz](http://localhost:3000/healthz).
 
-For information on how to register health/liveness checks, and additional support for start-up, readiness and shutdown checks, see the [Cloud Health documentation](https://github.com/CloudNativeJS/cloud-health/blob/master/README.md).
+For information more information on health/liveness checks, refer to the following:
+ - [NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
+ - [Red Hat Developer Blog on Health Checking] -
 
+### 3. Add Metrics to your Application
 
-## 3. Add Metrics to your Application
+For any application deployed to a cloud, it is important that the application is "observable": that you have sufficient information about an application and its dependencies such that it is possible to discover, understand and diagnose the state of the application. One important aspect of application observability is metrics-based monitoring data for the application.
 
+The CNCF recommended metrics system is [Prometheus](http://prometheus.io), which works by collecting metrics data by making requests of a URL endpoint provided by the application. Prometheus is widely supported inside Kubernetes, meaning that Prometheus also collects data from Kubernetes itself, and application data provided to Prometheus can also be used to automatically scale your application.
 
-For any application deployed to a cloud, it is important that the application is "observable": that you have sufficient information about an application and its dependencies such that it is possible to discover, understand and diagnose the state of the application. One important aspect of application observability is metrics-based monitoring data for the application. 
-
-The CNCF recommended metrics system is [Prometheus](http://prometheus.io), which works by collecting metrics data by making requests of a URL endpoint provided by the application. Prometheus is widely supported inside Kubernetes, meaning that Prometheus also collects data from Kubernetes itself, and application data provided to Prometheus can also be used to automatically scale your application. 
-
-The `appmetrics-prometheus` package provides an easy to use library that auto-instruments your application to collect metrics and exposes them on a `/metrics` endpoint for consumption by Prometheus.
+The `prom-client` package provides an easy to use library that auto-instruments your application to collect metrics. It is then possible to expose the metrics on an endpoint for consumption by Prometheus.
 
 Add a `/metrics` Prometheus endpoint to your Express.js application using the following steps:
 
-1. Add the `appmetrics-prometheus` dependency to your project
-   
+1. Add the `prom-client` dependency to your project:
+
    ```sh
-   npm install appmetrics-prometheus
+   npm install prom-client
    ```
 
-2. 	Require `appmetrics-prometheus` and attach it to your Express server:
+2. Require `prom-client` in `app.js` and choose to configure default metrics:
 
    ```js
-   var prometheus = require('appmetrics-prometheus').attach();
+   // Prometheus client setup
+   var Prometheus = require('prom-client');
+   Prometheus.collectDefaultMetrics();
    ```
-   
-This has added a '/metrics' endpoint to your application. This automatically starts collecting CPU, Memory and HTTP responsiveness data from your application and exposes it in a format that Prometheus understands.
+
+    It is recommended to add this just after your Health Check setup.
+
+3. Register a `/metrics` route to serve the data on:
+
+   ```js
+   app.get('/metrics', (req, res, next) => {
+      res.set('Content-Type', Prometheus.register.contentType);
+      res.end(Prometheus.register.metrics());
+   });
+   ```
+
+You'll also need to register the `app.get('/metrics')...` route before the 404 catch handlers. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
 
 Check that your metrics endpoint is running:
 
@@ -184,19 +262,20 @@ Check that your metrics endpoint is running:
    ```sh
    npm start
    ```
-2. Visit the `metrics` endpoint:
 
-   [http://localhost:3000/metrics](http://localhost:3000/metrics)
+2. Visit the `metrics` endpoint [http://localhost:3000/metrics](http://localhost:3000/metrics).
 
-For information on how to configure the appmetrics-prometheus library see the [appmetrics-prometheus documentation](https://github.com/CloudNativeJS/appmetrics-prometheus).
+For information on how to configure the `prom-client` library see the [prom-client documentation](https://github.com/siimon/prom-client#prometheus-client-for-nodejs---).
 
 You can install a local Prometheus server to graph and visualize the data, and additionally to set up alerts. For this workshop you'll use Prometheus once you've deployed your application to Kubernetes.
 
-## 4. Building your Application with Docker
+### 4. Building your Application with Docker
+
+//TODO use sample Dockerfile at NodeShift (UBI or not?)
 
 Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready to run format.
 
-CloudNativeJS provide a "[Docker](https://github.com/CloudNativeJS/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
+NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
 
 For this workshop, you'll use the `Dockerfile-run` template, which builds a production-ready Docker image for your application.
 
@@ -205,77 +284,96 @@ Build a production Docker image for your Express.js application using the follow
 1. Copy the `Dockerfile-run` template into the root of your project:
 
    ```sh
-   wget https://raw.githubusercontent.com/CloudNativeJS/docker/master/Dockerfile-run
+   curl -fsSL -o Dockerfile-run https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
    ```
-   
-1. Copy the `.dockerignore` file into the root of your project:
+
+2. Copy the `.dockerignore` file into the root of your project:
 
    ```sh
-   wget https://raw.githubusercontent.com/CloudNativeJS/docker/master/.dockerignore
+   curl -fsSL -o .dockerignore https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
    ```
-   
-2. Build the Docker run image for your application:
+
+3. Build the Docker run image for your application:
 
    ```sh
-   docker build -t nodeserver-run:1.0.0 -f Dockerfile-run .
+   docker build --tag nodeserver-run:1.0.0 --file Dockerfile-run .
    ```
-   
+
 You have now built a Docker image for your application called `nodeserver-run` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
 
+  ```sh
+  docker run --interactive --publish 3000:3000 --tty nodeserver-run:1.0.0
+  ```
+
+This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
+
+<details>
+<summary>minikube only</summary>
+
+Docker runs in the minikube VM, so an additional step is
+required to expose the application to localhost:
 ```sh
-docker run -i -p 3000:3000 -t nodeserver-run:1.0.0
+kubectl port-forward service/nodeserver-service 3000
 ```
+</details>
 
-This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application. 
-
-Go ahead and visit your applications endpoints to check that it is running successfully: 
+Visit your applications endpoints to check that it is running successfully:
 
 * Homepage: [http://localhost:3000/](http://localhost:3000/)
 * Health: [http://localhost:3000/health](http://localhost:3000/health)
 * Metrics: [http://localhost:3000/metrics](http://localhost:3000/metrics)
 
-For information on Docker usage, how to develop your application directly in a Docker container, and how to debug your application in a Docker container, see the [Docker documentation](https://github.com/CloudNativeJS/docker).
-
 ## 5. Packaging your Application with Helm
+
+//TODO: use Helm chart for Kube
 
 In order to deploy your Docker image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which Docker image to use, how many replicas (instances) to deploy and much memory and CPU to provide to each.
 
-Helm charts provide an easy way to package your application with this information. 
+Helm charts provide an easy way to package your application with this information.
 
-CloudNativeJS provides a "[Helm](https://github.com/CloudNativeJS/helm)" project that provides a template best-practice Helm chart template that can be used to package your application for Kubernetes.
+NodeShift provides a "[Helm](https://github.com/NodeShift/helm)" project that provides a template best-practice Helm chart template that can be used to package your application for Kubernetes.
 
 Add a Helm chart for your Express.js application using the following steps:
 
-1. Download the template Helm chart
+// TODO: download chart from CNJS once moved
+
+1. Download the template Helm chart:
 
    ```sh
-   wget https://github.com/CloudNativeJS/helm/archive/master.zip
+   curl -fsSL -o master.tar.gz https://github.com/NodeShift/helm/archive/master.tar.gz
    ```
 
-2. Unzip the downloaded template chart
+2. Unzip the downloaded template chart:
 
    ```sh
-   unzip master.zip 
+   tar xfz master.tar.gz
    ```
 
-3. Move the chart to your projects root directory
+3. Move the chart to your projects root directory:
 
+   On Linux and macOS:
    ```sh
    mv helm-master/chart chart
    rm -rf helm-master master.zip
-	```
-	
-The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replacates (instances) to deploy, etc.
+   ```
+
+   On Windows:
+   ```
+   move helm-master\chart chart
+   rmdir /s /q helm-master
+   del master.tar.gz
+   ```
+
+The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
 
 Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
 2. Change the `repository` field to `nodeserver-run`
-3. Change the `pullPolicy` to `IfNotPresent`
-4. Change the `replicaCount` value to `3`
+3. Ensure that the `pullPolicy` is set to `IfNotPresent`
+4. Change the `replicaCount` value to `3` (Line 3)
 
-The `repository` field gives the name of the Docker image to use. The `pullPolicy` change tells Kuberentes to use a local Docker image if there is one available rather than always pulling the Docker image from a remote repository. Finally, the `replicaCount` states how many instances to deploy.
- 
+The `repository` field gives the name of the Docker image to use. The `pullPolicy` change tells Kubernetes to use a local Docker image if there is one available rather than always pulling the Docker image from a remote repository. Finally, the `replicaCount` states how many instances to deploy.
 
 ## 6. Deploying your Application to Kubernetes
 
@@ -283,97 +381,165 @@ Now that you have built a Helm chart for your application, the process for deplo
 
 Deploy your Express.js application into Kubernetes using the following steps:
 
+<details>
+<summary>microk8s only</summary>
+
+You will need to push the image into the kubernetes container registry so that microk8s can access it.
+
+```sh
+docker tag nodeserver-run:1.0.0 localhost:32000/nodeserver-run:1.0.0
+docker push localhost:32000/nodeserver-run:1.0.0
+helm install nodeserver \
+  --set image.repository=localhost:32000/nodeserver-run  chart/nodeserver
+```
+</details>
+
+
 1. Deploy your application into Kubernetes:
 
    ```sh
-   helm install --name nodeserver chart/nodeserver
+   helm install nodeserver chart/nodeserver
    ```
-   
+
+
+**Note**: If an error is encountered because the previous `docker run` is still running,delete and retry the helm install:
+
+   ```sh
+   helm del --purge nodeserver
+   helm install nodeserver chart/nodeserver
+   ```
+
 2. Ensure that all the "pods" associated with your application are running:
 
    ```sh
    kubectl get pods
    ```
-   
-Now everything is up and running in Kubernetes. Its not possible to navigate to localhost:3000 as usual because your cluster isn't part of the localhost network, and because there are several instances to choose from.
 
-You can forward one of the instances ports to your laptop using the following steps:
+Now everything is up and running in Kubernetes. It is not possible to navigate to `localhost:3000` as usual because your cluster isn't part of the localhost network, and because there are several instances to choose from.
 
-1. Choose one of the running "pod" instances:
-   ```sh
-   kubectl get pods #Copy the nodeserver NAME
-   ```
-   
-2. Forward its port to your laptop
+You can forward the nodeserver-service to your laptop by:
 
-   ```sh
-   kubectl port-forward nodeserver-deployment-XXXXXX-XXXXX 3000:3000
-   ```
+  ```sh
+  kubectl port-forward service/nodeserver-service 3000
+  ```
 
-You can now access that pod's endpoints from your browser.
+You can now access the application endpoints from your browser.
 
 ## 7. Monitoring your Application with Prometheus
 
-Installing Prometheus into Kubernetes can be done using its provided Helm chart:
+Installing Prometheus into Kubernetes can be done using its provided Helm chart. This step needs to be done in a new Terminal window as you'll need to keep the application port-forwarded to `localhost:3000`.
 
-```sh
-helm install stable/prometheus --name prometheus --namespace prometheus
-```
+  ```sh
+  kubectl create namespace prometheus
+  kubectl config set-context --current --namespace=prometheus
+  helm install prometheus stable/prometheus --namespace=prometheus
+  ```
 
 You can then run the following two commands in order to be able to connect to Prometheus from your browser:
 
-```sh
-export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace prometheus port-forward $POD_NAME 9090
-```
-You can now connect to Prometheus at the following address:
+  On Linux and macOS:
+  ```sh
+  export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace prometheus port-forward $POD_NAME 9090
+  ```
 
-* [http://localhost:9090](http://localhost:9090)
+  On Windows:
+  ```
+  for /f "tokens=*" %i in ('"kubectl get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  kubectl --namespace prometheus port-forward %POD_NAME% 9090
+  ```
+
+This may fail with a warning about status being "Pending" until Prometheus has started, retry once status is "Running" for all pods:
+  ```sh
+  kubectl -n prometheus get pods --watch
+  ```
+
+You can now connect to Prometheus at [http://localhost:9090](http://localhost:9090).
 
 This should show the following screen:
-![prometheus-dashboard](./resources/prometheus-dashboard.png)
+
+![Prometheus dashboard](./images/prometheus_graph.png)
+
 Prometheus will be automatically collecting data from your Express.js application, allowing you to create graphs of your data.
 
-To build your first graph, type `os_cpu_used_ratio` into the **Expression** box and click on the **Graph** tab:
+To build your first graph, type `nodejs_heap_size_used_bytes` into the **Expression** box and click on the **Graph** tab.
 
-![prometheus-graph](./resources/prometheus-graph.png)
+This will show a graph mapping the `nodejs_heap_size_used_bytes` across each of the three pods. You'll probably want to reduce the graph interval to `1m` (1 minute) so that you can start seeing the changes in the graph. You can also try sending some requests to your server (http://localhost:3000) in another browser window to add load to the server, which you should then see reflected in the graph.
 
+![Prometheus Graph](./images/prom_graph2.png)
+
+<details>
+<summary>microk8s only</summary>
+
+If you encounter a problem where there are no nodejs metrics in the **Expression** box, your Prometheus deployment may not be scraping metrics form the nodeserver. To check your microk8s cluster is setup ok run the following command:
+
+```sh
+microk8s.inspect
+```
+
+You may see the following warning
+
+```sh
+WARNING:  IPtables FORWARD policy is DROP. Consider enabling traffic forwarding with: sudo iptables -P FORWARD ACCEPT
+The change can be made persistent with: sudo apt-get install iptables-persistent
+```
+
+To fix this warning run the following command which will ensure packets sent to/from your pods can be forwarded. This change is also non-persistent.
+
+```sh
+sudo iptables -P FORWARD ACCEPT
+```
+
+More microk8s troubleshooting information can be found here: https://microk8s.io/docs/troubleshooting
+
+</details>
 
 Whilst Prometheus provides the ability to build simple graphs and alerts, Grafana is commonly used to build more sophisticated dashboards.
 
 ### Installing Grafana into Kubernetes
 
-Installing Grafana into Kubernetes can be done using its provided Helm chart:
+Installing Grafana into Kubernetes can be done using its provided Helm chart.
+
+In a third Terminal window:
 
 ```sh
-helm install stable/grafana --set adminPassword=PASSWORD --name grafana --namespace grafana
+kubectl create namespace grafana
+kubectl config set-context --current --namespace=grafana
+helm install grafana stable/grafana --set adminPassword=PASSWORD --namespace=grafana
 ```
 
 You can then run the following two commands in order to be able to connect to Grafana from your browser:
 
-```sh
-export POD_NAME=$(kubectl get pods --namespace grafana -l "app=grafana" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace grafana port-forward $POD_NAME 3000
-```
+  On Linux and macOS:
+  ```sh
+  export POD_NAME=$(kubectl get pods --namespace grafana -o jsonpath="{.items[0].metadata.name}")
+  kubectl --namespace grafana port-forward $POD_NAME 3001:3000
+  ```
+
+  On Windows:
+  ```
+  for /f "tokens=*" %i in ('"kubectl get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  kubectl --namespace grafana port-forward %POD_NAME% 3001:3000
+  ```
+
 You can now connect to Grafana at the following address, using `admin` and `PASSWORD` to login:
 
-* [http://localhost:3000](http://localhost:3000)
+* [http://localhost:3001](http://localhost:3001)
 
 This should show the following screen:
 
-![grafana-home](./resources/grafana-home.png)
+![Grafana home screen](./images/grafana_home.png)
 
-In order to connect Grafana to the Prometheus service, next click on **Add data source**.
+In order to connect Grafana to the Prometheus service, go to http://localhost:3001/datasources and click `Add Data Source`. Select `Prometheus`.
 
 This opens the a panel that should be filled out with the following entries:
 
 * Name: `Prometheus`
-* Type: `Prometheus`
 * URL: `http://prometheus-server.prometheus.svc.cluster.local`
 
-![grafana-datasource](./resources/grafana-datasource.png)
+![Prometheus dashboard](./images/grafana_datasource.png)
 
-Now click on **Save & Test** to check the connection and save the Data Source configuration.
+Now click on `Save & Test` to check the connection and save the Data Source configuration.
 
 Grafana now has access to the data from Prometheus.
 
@@ -381,47 +547,90 @@ Grafana now has access to the data from Prometheus.
 
 The Grafana community provides a large number of pre-created dashboards which are available for download, including some which are designed to display Kubernetes data.
 
-To install one of those dashboards, click on the **+** icon and select **Import**
+To install one of those dashboards, click on the `+` icon and select `Import`.
 
-![grafana-import-select](./resources/grafana-import-select.png)
+In the provided panel, enter `1621` into the `Grafana.com Dashboard` field in order to import dashboard number 1621, and press `Tab`.
 
-In the provided panel, enter `1621` into the **Grafana.com Dashboard** field in order to import dashboard number 1621, and press **Tab**.
+**Note**: If `1621` is not recognized, it may be necessary to download the JSON for [1621](https://grafana.com/grafana/dashboards/1621) (select `Download JSON`), and use `Upload JSON` in the Grafana UI.
 
 This then loads the information on dashboard `1621` from Grafana.com.
 
-Set the **Prometheus** field to `Prometheus` and click **Import**.
+![Grafana import dashboard screen](./images/grafana_import.png)
 
-![grafana-dashboard-import](./resources/grafana-dashboard-import.png)
+Change the `Prometheus` field so that it is set to `Prometheus` and click `Import`.
 
 This will then open the dashboard, which will automatically start populating with data about your Kubernetes cluster.
 
-![grafana-kube-dash](./resources/grafana-kube-dash.png)
+![Grafana Kubernetes cluster monitoring dashboard](./images/grafana_monitor.png)
 
 ### Adding Custom Graphs
 
-In order to extend the dashboard with your own graphs, click the **Add panel** icon on the top toolbar and select **Graph**.
+In order to extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar and select `Graph`.
 
-![grafana-add-graph](./resources/grafana-add-graph.png)
+On some Grafana versions, after you click `Add panel` in toolbar, it is necessary to select `Choose Visualization` before selecting `Graph`.
 
-This creates a blank graph. Select the **Panel Title** pull down menu and select **Edit**.
+This creates a blank graph. Select the `Panel Title` pull down menu and select `Edit`.
 
 This opens an editor panel where you can select data that you'd like to graph.
 
-Type `os_cpu_used_ratio` into the data box, and a graph of your applications CPU data will show on the panel.
+Type `nodejs_heap_size_used_bytes` into the data box (or `Metrics` box on some version of Grafana), and a graph of your applications CPU data will show on the panel. You may need to click the `Queries` icon on the left to access the data box.
 
-You can create more complex queries and apply filters according to any kubernetes value. For example, the following will show all of the HTTP request durations for your specific application:
-
-* `http_request_duration_microseconds{kubernetes_name="nodeserver-service"}`
-
+![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
 You now have integrated monitoring for both your Kubernetes cluster and your deployed Express.js application.
 
-Here are some ideas you could explore to further your learning.
+### Congratulations! 🎉
 
-* Add a Singlestat that shows how many instances of you Express.js application are currently running
-* Add a Singlestat that shows how many requests your Express.js app has responded to
+You now have an Express.js application deployed with scaling using Docker and Kubernetes, with automatic restart, and full metrics-based monitoring enabled!
+
+Once you are finished, you should exit all the running terminal processes with `CTRL + C`, and then use the following commands to delete the helm releases and remove your Kubernetes pods:
+
+```sh
+helm delete nodeserver -n default
+helm delete prometheus -n prometheus
+helm delete grafana -n grafana
+```
+
+To change your Kubernetes context back to default use:
+
+```sh
+kubectl config set-context --current --namespace=default
+```
+
+## Part 2: Building Cloud-Native Apps with Odo
+
+### Introduction to Odo
+
+//TODO
+
+### Prerequisites
+
+Before getting started, you’ll need to install odo.
+
+1.
+
+### 1. Getting to know odo
+
+`odo`
+
+//TODO: components
+//TODO: odo login
 
 
-## Congratulations! 🎉
+### 2. Node.js Express Starter Application with Odo
 
-You now have an Express.js application deployed at scaling using Docker and Kubernetes, with automatic restart and full metrics based monitoring enabled!
+//TODO: Creating a new application with the `nodejs-express` Appsody Stack.
+
+### 3. Developing your application with Odo
+
+//TODO: odo watch, make change, see it deployed in cluster
+
+
+//TODO: check
+**Note**: `npm install` commands will not cause the application to automatically restart.
+
+
+//TODO: how to frame?
+## 4. Deploying to Kubernetes
+
+You’ve finished writing your code and want to deploy to Kubernetes.
