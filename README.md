@@ -267,8 +267,6 @@ You can install a local Prometheus server to graph and visualize the data, and a
 
 ### 4. Building your Application with Docker
 
-//TODO use sample Dockerfile at NodeShift (UBI or not?)
-
 Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready to run format.
 
 NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
