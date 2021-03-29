@@ -2,11 +2,9 @@
 
 Welcome :wave: to the Node.js in the Cloud workshop!
 
-The workshop will be in two parts:
-  1. [Extending an application to leverage cloud capabilities]()
-  2. [Tools to accelerate cloud-native development]()
+The workshop will cover how to extend a Node.js application to leverage cloud capabilities.
 
-## Part 1: Extending an application to leverage cloud capabilities
+## Extending an application to leverage cloud capabilities
 
 ### Building a Cloud-Ready Express.js Application
 
@@ -110,8 +108,6 @@ Kubernetes 1.16, so make sure to install 1.14.
 </details>
 
 #### `minikube`
-
-//TODO: update for latest minikube
 
 <details>
 
@@ -325,8 +321,6 @@ Visit your applications endpoints to check that it is running successfully:
 
 ## 5. Packaging your Application with Helm
 
-//TODO: use Helm chart for Kube
-
 In order to deploy your Docker image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which Docker image to use, how many replicas (instances) to deploy and much memory and CPU to provide to each.
 
 Helm charts provide an easy way to package your application with this information.
@@ -334,8 +328,6 @@ Helm charts provide an easy way to package your application with this informatio
 NodeShift provides a "[Helm](https://github.com/NodeShift/helm)" project that provides a template best-practice Helm chart template that can be used to package your application for Kubernetes.
 
 Add a Helm chart for your Express.js application using the following steps:
-
-// TODO: download chart from CNJS once moved
 
 1. Download the template Helm chart:
 
@@ -596,41 +588,3 @@ To change your Kubernetes context back to default use:
 ```sh
 kubectl config set-context --current --namespace=default
 ```
-
-## Part 2: Building Cloud-Native Apps with Odo
-
-### Introduction to Odo
-
-//TODO
-
-### Prerequisites
-
-Before getting started, you’ll need to install odo.
-
-1.
-
-### 1. Getting to know odo
-
-`odo`
-
-//TODO: components
-//TODO: odo login
-
-
-### 2. Node.js Express Starter Application with Odo
-
-//TODO: Creating a new application with the `nodejs-express` Appsody Stack.
-
-### 3. Developing your application with Odo
-
-//TODO: odo watch, make change, see it deployed in cluster
-
-
-//TODO: check
-**Note**: `npm install` commands will not cause the application to automatically restart.
-
-
-//TODO: how to frame?
-## 4. Deploying to Kubernetes
-
-You’ve finished writing your code and want to deploy to Kubernetes.
