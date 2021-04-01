@@ -33,7 +33,7 @@ Before getting started, make sure you have the following prerequisites installed
     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
     - [microk8s](https://microk8s.io/#quick-start)
 4. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.1.2
+   - **Note**: This workshop tested with Helm v3.4.2
 
 ### Setting up
 
@@ -142,7 +142,7 @@ $ ./get_helm.sh
 Now that Helm is installed, you should also configure access to the "stable" Helm repository as follows:
 
 ```sh
-helm repo add stable https://kubernetes-charts.storage.googleapis.com
+helm repo add stable https://charts.helm.sh/stable
 ```
 
 This makes it easy for you to install a number of applications and services into your Kubernetes cluster. You'll use this to install Prometheus and Grafana later in the workshop.
@@ -151,7 +151,7 @@ This makes it easy for you to install a number of applications and services into
 
 Use the following steps to create your Express.js application:
 
-1. Create a directory to host your project
+1. Create a directory to host your project:
 
    ```sh
    mkdir nodeserver
@@ -234,19 +234,24 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
 
    ```js
    // Prometheus client setup
-   var Prometheus = require('prom-client');
+   const Prometheus = require('prom-client');
    Prometheus.collectDefaultMetrics();
    ```
 
-    It is recommended to add this just after your Health Check setup.
+    It is recommended to add these lines to around Line 6, below the `morgan` logger import.
 
 3. Register a `/metrics` route to serve the data on:
 
    ```js
-   app.get('/metrics', (req, res, next) => {
-      res.set('Content-Type', Prometheus.register.contentType);
-      res.end(Prometheus.register.metrics());
-   });
+   app.get('/metrics', async (req, res, next) => {
+   try {
+      res.set('Content-Type', Prometheus.register.contentType)
+      const metrics = await Prometheus.register.metrics()
+      res.end(metrics)
+   } catch {
+      next(createError(500))
+   }
+   })
    ```
 
 You'll also need to register the `app.get('/metrics')...` route before the 404 catch handlers. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
@@ -330,28 +335,28 @@ Add a Helm chart for your Express.js application using the following steps:
 1. Download the template Helm chart:
 
    ```sh
-   curl -fsSL -o master.tar.gz https://github.com/NodeShift/helm/archive/master.tar.gz
+   curl -fsSL -o main.tar.gz https://github.com/NodeShift/helm/archive/main.tar.gz
    ```
 
 2. Unzip the downloaded template chart:
 
    ```sh
-   tar xfz master.tar.gz
+   tar xfz main.tar.gz
    ```
 
 3. Move the chart to your projects root directory:
 
    On Linux and macOS:
    ```sh
-   mv helm-master/chart chart
-   rm -rf helm-master master.zip
+   mv helm-main/chart chart
+   rm -rf helm-main main.zip
    ```
 
    On Windows:
    ```
-   move helm-master\chart chart
-   rmdir /s /q helm-master
-   del master.tar.gz
+   move helm-main\chart chart
+   rmdir /s /q helm-main
+   del main.tar.gz
    ```
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
