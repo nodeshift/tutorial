@@ -234,7 +234,7 @@ Add a Health Check endpoint to your Express.js application using the following s
    app.get("/healthz", (req, res) => res.status(200).json({ status: "ok" }));
    ```
 
- Add this line after the `app.use('/users', usersRouter);` line but before the 404 catch handler. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
+ Add this line after the `app.use('/users', usersRouter);` line. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
 Check that your `livenessProbe` Health Check endpoint is running:
 
@@ -285,7 +285,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
       const metrics = await Prometheus.register.metrics()
       res.end(metrics)
    } catch {
-      next(createError(500))
+      res.end('')
    }
    })
    ```
