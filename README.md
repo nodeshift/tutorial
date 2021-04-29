@@ -12,7 +12,7 @@ This will show you how to take a Node.js application and make it "cloud-ready": 
 
 In this self-paced tutorial you will:
 
-- Creat an Express.js application
+- Create an Express.js application
 - Add logging, metrics, and health checks
 - Build your application with Docker
 - Package your application with Helm
@@ -49,11 +49,11 @@ Ensure you have installed Docker for Desktop and enabled Kubernetes within the a
 
 On macOS:
 1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes Tab > Enable Kubernetes`.
+2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
 
 On Windows:
 1. Select the Docker icon in the notifiation area of the taskbar.
-2. Click `Settings > Kubernetes Tab > Enable Kubernetes`.
+2. Click `Settings > Kubernetes > Enable Kubernetes`.
 
 It will take a few moments to install and start-up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
 
@@ -158,7 +158,6 @@ The following steps cover creating a base Express.js application. Express.js is 
    ```sh
    mkdir express-app
    cd express-app
-   npm init --yes
    ```
 
 2. Intialize your project with `npm` and install the Express.js module: 
@@ -193,7 +192,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    ```js
    const express = require("express");
    const helmet = require("helmet");
-   const pino = require("pino");
+   const pino = require("pino")();
    const PORT = process.env.PORT || 3000;
 
    const app = express();
@@ -234,7 +233,7 @@ Add a Health Check endpoint to your Express.js application using the following s
    app.get("/healthz", (req, res) => res.status(200).json({ status: "ok" }));
    ```
 
- Add this line after the `app.use('/users', usersRouter);` line. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
+ Add this line after the `app.get('/'...` line. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
 Check that your `livenessProbe` Health Check endpoint is running:
 
@@ -290,7 +289,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
    })
    ```
 
-You'll also need to register the `app.get('/metrics')...` route before the 404 catch handlers. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
+Register the `app.get('/metrics')...` route after your `/healthz` route handler. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
 
 Check that your metrics endpoint is running:
 
@@ -331,13 +330,13 @@ Build a production Docker image for your Express.js application using the follow
 3. Build the Docker run image for your application:
 
    ```sh
-   docker build --tag nodeserver-run:1.0.0 --file Dockerfile-run .
+   docker build --tag express-app:1.0.0 --file Dockerfile-run .
    ```
 
-You have now built a Docker image for your application called `nodeserver-run` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
+You have now built a Docker image for your application called `express-app` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
 
   ```sh
-  docker run --interactive --publish 3000:3000 --tty nodeserver-run:1.0.0
+  docker run --interactive --publish 3000:3000 --tty express-app:1.0.0
   ```
 
 This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
@@ -397,7 +396,7 @@ Add a Helm chart for your Express.js application using the following steps:
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
 
-Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
+Go ahead and modify the `chart/express-app/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
 2. Change the `repository` field to `nodeserver-run`
@@ -604,7 +603,7 @@ This creates a blank graph. Select the `Panel Title` pull down menu and select `
 
 This opens an editor panel where you can select data that you'd like to graph.
 
-Type `nodejs_heap_size_used_bytes` into the data box (or `Metrics` box on some version of Grafana), and a graph of your applications CPU data will show on the panel. You may need to click the `Queries` icon on the left to access the data box.
+Type `nodejs_heap_size_used_bytes` into the data box (or `Metrics` box on some version of Grafana), and a graph of your applications CPU data will show on the panel. You may need to click the `Query` icon on the left to access the data box.
 
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
