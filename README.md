@@ -10,22 +10,24 @@ The workshop will cover how to extend a Node.js application to leverage cloud ca
 
 This will show you how to take a Node.js application and make it "cloud-ready": adding support for Cloud Native Computing Foundation (CNCF) technologies using the package and templates provided by the [NodeShift](https://nodeshift.dev/) project.
 
-In this self-paced tutorial, you will start with an Express.js application and:
+In this self-paced tutorial you will:
 
-* Add health checks
-* Add metrics to your application
-* Build your application with Docker
-* Package your application with Helm
-* Deploy your application to Kubernetes
-* Monitor your application using Prometheus
+- Creat an Express.js application
+- Add logging, metrics, and health checks
+- Build your application with Docker
+- Package your application with Helm
+- Deploy your application to Kubernetes
+- Monitor your application using Prometheus
 
 The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana. At the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
+
+//TODO mention reference architecture repository
 
 ### Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. [Node.js 14](https://nodejs.org/en/download/) or using [nvm](https://github.com/nvm-sh/nvm#installation-and-update)
+1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
 2. Visual Studio Code
 3. Docker and Kubernetes
    - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
@@ -149,44 +151,78 @@ This makes it easy for you to install a number of applications and services into
 
 ### 1. Create your Express.js Application
 
-Use the following steps to create your Express.js application:
+The following steps cover creating a base Express.js application. Express.js is a popular web server framework for Node.js.
 
 1. Create a directory to host your project:
 
    ```sh
-   mkdir nodeserver
-   cd nodeserver
+   mkdir express-app
+   cd express-app
+   npm init --yes
    ```
 
-2. Run the Express generator to build your skeleton application:
+2. Intialize your project with `npm` and install the Express.js module: 
 
    ```sh
-   npx express-generator --view=ejs
-   npm version 1.0.0
+   npm init --yes
+   npm install express
    ```
 
-This has built a simple Express.js application called `nodeserver`, after the name of the directory you are in.
-
-3. Express.js output still uses `var`, so let's update the code syntax using `standard`:
+3. We'll also install the Helmet module.  Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
 
    ```sh
-   npx standard --fix
+   npm install helmet
    ```
 
-4. Install your applications dependencies and start your application:
+4. It is important to add effective logging to your Node.js applications to facilitate observibility, that is to help you understand what is happening in your application. The Reference Architecture for Node.js applications recommends using Pino, a JSON-based logger. 
+
+   Install Pino:
+
+   ```sh
+   npm install pino
+   ```
+
+5. Create a file named `server.js`:
+
+   ```sh
+   touch server.js
+   ```
+
+6. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'. 
+
+   ```js
+   const express = require("express");
+   const helmet = require("helmet");
+   const pino = require("pino");
+   const PORT = process.env.PORT || 3000;
+
+   const app = express();
+
+   app.use(helmet());
+
+   app.get('/', (req, res) => {
+      res.send('Hello, World!');
+   });
+
+   app.listen(PORT, () => {
+      pino.info(`Server listening on port ${PORT}`);
+   });
+   ```
+
+4. Start your application:
 
     ```sh
-    npm install
     npm start
     ```
 
-Your application should now be visible at [http://localhost:3000](http://localhost:3000).
+Navigate to [http://localhost:3000](http://localhost:3000) and you should see the server respond with 'Hello, World!'.
+
 
 ### 2. Add Health Checks to your Application
 
 Kubernetes, and a number of other cloud deployment technologies, provide "Health Checking" as a system that allows the cloud deployment technology to monitor the deployed application and to take action should the application fail or report itself as "unhealthy".
 
-The simplest form of Health Check is process level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is un-responsive, or where it would be desirable to restart the application for other reasons.
+The simplest form of Health Check is process level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is unresponsive, or where it would be desirable to restart the application for other reasons.
 
 The next level of Health Check is HTTP based, where the application exposes a "livenessProbe" URL endpoint that Kubernetes can make requests of in order to determine whether the application is running and responsive. Additionally, the request can be used to drive self-checking capabilities in the application.
 
@@ -202,23 +238,23 @@ Add a Health Check endpoint to your Express.js application using the following s
 
 Check that your `livenessProbe` Health Check endpoint is running:
 
-1. Start your application:
+2. Start your application:
 
    ```sh
    npm start
    ```
 
-2. Visit the `healthz` endpoint [http://localhost:3000/healthz](http://localhost:3000/healthz).
+3. Visit the `healthz` endpoint [http://localhost:3000/healthz](http://localhost:3000/healthz).
 
 For information more information on health/liveness checks, refer to the following:
  - [NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
- - [Red Hat Developer Blog on Health Checking] -
+ - [Red Hat Developer Blog on Health Checking](https://developers.redhat.com/blog/2020/11/10/you-probably-need-liveness-and-readiness-probes/?sc_cid=7013a0000026DqpAAE)
 
 ### 3. Add Metrics to your Application
 
 For any application deployed to a cloud, it is important that the application is "observable": that you have sufficient information about an application and its dependencies such that it is possible to discover, understand and diagnose the state of the application. One important aspect of application observability is metrics-based monitoring data for the application.
 
-The CNCF recommended metrics system is [Prometheus](http://prometheus.io), which works by collecting metrics data by making requests of a URL endpoint provided by the application. Prometheus is widely supported inside Kubernetes, meaning that Prometheus also collects data from Kubernetes itself, and application data provided to Prometheus can also be used to automatically scale your application.
+One of the CNCF recommended metrics systems is [Prometheus](http://prometheus.io), which works by collecting metrics data by making requests of a URL endpoint provided by the application. Prometheus is widely supported inside Kubernetes, meaning that Prometheus also collects data from Kubernetes itself, and application data provided to Prometheus can also be used to automatically scale your application.
 
 The `prom-client` package provides an easy to use library that auto-instruments your application to collect metrics. It is then possible to expose the metrics on an endpoint for consumption by Prometheus.
 
@@ -234,8 +270,8 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
 
    ```js
    // Prometheus client setup
-   const Prometheus = require('prom-client');
-   Prometheus.collectDefaultMetrics();
+   const Prometheus = require('prom-client')
+   Prometheus.collectDefaultMetrics()
    ```
 
     It is recommended to add these lines to around Line 6, below the `morgan` logger import.
@@ -328,7 +364,7 @@ In order to deploy your Docker image to Kubernetes you need to supply Kubernetes
 
 Helm charts provide an easy way to package your application with this information.
 
-NodeShift provides a "[Helm](https://github.com/NodeShift/helm)" project that provides a template best-practice Helm chart template that can be used to package your application for Kubernetes.
+NodeShift provides a "[Helm](https://github.com/NodeShift/helm)" project that provides a template Helm chart template that can be used to package your application for Kubernetes.
 
 Add a Helm chart for your Express.js application using the following steps:
 
