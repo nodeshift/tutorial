@@ -190,9 +190,9 @@ The following steps cover creating a base Express.js application. Express.js is 
 6. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'. 
 
    ```js
-   const express = require("express");
-   const helmet = require("helmet");
-   const pino = require("pino")();
+   const express = require('express');
+   const helmet = require('helmet');
+   const pino = require('pino')();
    const PORT = process.env.PORT || 3000;
 
    const app = express();
@@ -230,7 +230,7 @@ Add a Health Check endpoint to your Express.js application using the following s
 1. Register a Liveness endpoint in `server.js`:
 
    ```js
-   app.get("/live", (req, res) => res.status(200).json({ status: "ok" }));
+   app.get('/live', (req, res) => res.status(200).json({ status: 'ok' }));
    ```
 
  Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
@@ -269,8 +269,8 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
 
    ```js
    // Prometheus client setup
-   const Prometheus = require('prom-client')
-   Prometheus.collectDefaultMetrics()
+   const Prometheus = require('prom-client');
+   Prometheus.collectDefaultMetrics();
    ```
 
     It is recommended to add these lines to around Line 6, below the `morgan` logger import.
@@ -354,7 +354,7 @@ kubectl port-forward service/nodeserver-service 3000
 Visit your applications endpoints to check that it is running successfully:
 
 * Homepage: [http://localhost:3000/](http://localhost:3000/)
-* Health: [http://localhost:3000/health](http://localhost:3000/health)
+* Liveness: [http://localhost:3000/health](http://localhost:3000/live)
 * Metrics: [http://localhost:3000/metrics](http://localhost:3000/metrics)
 
 ## 5. Packaging your Application with Helm
@@ -464,6 +464,7 @@ Installing Prometheus into Kubernetes can be done using its provided Helm chart.
   kubectl config set-context --current --namespace=prometheus
   helm install prometheus stable/prometheus --namespace=prometheus
   ```
+
 
 You can then run the following two commands in order to be able to connect to Prometheus from your browser:
 
