@@ -21,7 +21,7 @@ In this self-paced tutorial you will:
 
 The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana. At the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
-//TODO mention reference architecture repository
+The content of this tutorial is based on recommendations from the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md).
 
 ### Prerequisites
 
@@ -167,13 +167,13 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install express
    ```
 
-3. We'll also install the Helmet module.  Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
+3. We'll also install the Helmet module. Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
 
    ```sh
    npm install helmet
    ```
 
-4. It is important to add effective logging to your Node.js applications to facilitate observibility, that is to help you understand what is happening in your application. The Reference Architecture for Node.js applications recommends using Pino, a JSON-based logger. 
+4. It is important to add effective logging to your Node.js applications to facilitate observibility, that is to help you understand what is happening in your application. the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) applications recommends using Pino, a JSON-based logger. 
 
    Install Pino:
 
@@ -227,13 +227,13 @@ The next level of Health Check is HTTP based, where the application exposes a "l
 
 Add a Health Check endpoint to your Express.js application using the following steps:
 
-1. Register a Liveness endpoint in `app.js`:
+1. Register a Liveness endpoint in `server.js`:
 
    ```js
-   app.get("/healthz", (req, res) => res.status(200).json({ status: "ok" }));
+   app.get("/live", (req, res) => res.status(200).json({ status: "ok" }));
    ```
 
- Add this line after the `app.get('/'...` line. This adds a `/healthz` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
+ Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
 Check that your `livenessProbe` Health Check endpoint is running:
 
@@ -243,10 +243,10 @@ Check that your `livenessProbe` Health Check endpoint is running:
    npm start
    ```
 
-3. Visit the `healthz` endpoint [http://localhost:3000/healthz](http://localhost:3000/healthz).
+3. Visit the `live` endpoint [http://localhost:3000/live](http://localhost:3000/live).
 
 For information more information on health/liveness checks, refer to the following:
- - [NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
+ - [NodeShift Reference Architecture for Node.js Applications - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
  - [Red Hat Developer Blog on Health Checking](https://developers.redhat.com/blog/2020/11/10/you-probably-need-liveness-and-readiness-probes/?sc_cid=7013a0000026DqpAAE)
 
 ### 3. Add Metrics to your Application
@@ -265,7 +265,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
    npm install prom-client
    ```
 
-2. Require `prom-client` in `app.js` and choose to configure default metrics:
+2. Require `prom-client` in `server.js` and choose to configure default metrics:
 
    ```js
    // Prometheus client setup
@@ -289,7 +289,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
    })
    ```
 
-Register the `app.get('/metrics')...` route after your `/healthz` route handler. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
+Register the `app.get('/metrics')...` route after your `/live` route handler. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
 
 Check that your metrics endpoint is running:
 
