@@ -21,7 +21,7 @@ In this self-paced tutorial you will:
 
 The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana. At the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
-The content of this tutorial is based on recommendations from the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md).
+The content of this tutorial is based on recommendations from the  [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
 
 ### Prerequisites
 
