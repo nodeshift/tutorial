@@ -28,13 +28,12 @@ The content of this tutorial is based on recommendations from the  [NodeShift Re
 Before getting started, make sure you have the following prerequisites installed on your system.
 
 1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-2. Visual Studio Code
-3. Docker and Kubernetes
+1. Docker and Kubernetes
    - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
    - ***On Linux***: Docker for Desktop is not available, follow the docker for linux instructions below and Kubernetes alternatives are:
     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
     - [microk8s](https://microk8s.io/#quick-start)
-4. Helm v3 - https://helm.sh/docs/intro/install/
+1. Helm v3 - https://helm.sh/docs/intro/install/
    - **Note**: This workshop tested with Helm v3.4.2
 
 ### Setting up
