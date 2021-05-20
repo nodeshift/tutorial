@@ -272,7 +272,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
    Prometheus.collectDefaultMetrics();
    ```
 
-    It is recommended to add these lines to around Line 6, below the `morgan` logger import.
+    It is recommended to add these lines to around Line 3 below the `pino` logger import.
 
 3. Register a `/metrics` route to serve the data on:
 
@@ -461,9 +461,9 @@ Installing Prometheus into Kubernetes can be done using its provided Helm chart.
   ```sh
   kubectl create namespace prometheus
   kubectl config set-context --current --namespace=prometheus
-  helm install prometheus stable/prometheus --namespace=prometheus
+  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+  helm install prometheus prometheus-community/prometheus --namespace=prometheus
   ```
-
 
 You can then run the following two commands in order to be able to connect to Prometheus from your browser:
 
@@ -535,7 +535,8 @@ In a third Terminal window:
 ```sh
 kubectl create namespace grafana
 kubectl config set-context --current --namespace=grafana
-helm install grafana stable/grafana --set adminPassword=PASSWORD --namespace=grafana
+helm repo add grafana https://grafana.github.io/helm-charts
+helm install grafana grafana/grafana --set adminPassword=PASSWORD --namespace=grafana
 ```
 
 You can then run the following two commands in order to be able to connect to Grafana from your browser:
