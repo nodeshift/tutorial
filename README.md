@@ -2,7 +2,9 @@
 
 Welcome :wave: to the Node.js in the Cloud workshop!
 
-The workshop will cover how to extend a Node.js application to leverage cloud capabilities.
+The workshop provides an introduction to cloud-native development with Node.js by walking you through how to extend an Express.js-based application to leverage cloud capabilities.
+
+**Target Audience:** This workshop is aimed at developers who are familiar with Node.js but want to gain a base understanding of some of the key concepts of cloud-native development with Node.js.
 
 ## Extending an application to leverage cloud capabilities
 
@@ -19,7 +21,7 @@ In this self-paced tutorial you will:
 - Deploy your application to Kubernetes
 - Monitor your application using Prometheus
 
-The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus and Grafana. At the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
+The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus, Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
 The content of this tutorial is based on recommendations from the  [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
 
@@ -51,10 +53,10 @@ On macOS:
 2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
 
 On Windows:
-1. Select the Docker icon in the notifiation area of the taskbar.
+1. Select the Docker icon in the notification area of the taskbar.
 2. Click `Settings > Kubernetes > Enable Kubernetes`.
 
-It will take a few moments to install and start-up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
 
 1. Select the Docker icon in the Menu Bar
 2. Click `Kubernetes` and select the `docker-for-desktop` context
@@ -159,7 +161,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    cd express-app
    ```
 
-2. Intialize your project with `npm` and install the Express.js module: 
+2. Initialize your project with `npm` and install the Express.js module: 
 
    ```sh
    npm init --yes
@@ -172,7 +174,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install helmet
    ```
 
-4. It is important to add effective logging to your Node.js applications to facilitate observibility, that is to help you understand what is happening in your application. the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) applications recommends using Pino, a JSON-based logger. 
+4. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) applications recommends using Pino, a JSON-based logger. 
 
    Install Pino:
 
@@ -254,7 +256,7 @@ For any application deployed to a cloud, it is important that the application is
 
 One of the CNCF recommended metrics systems is [Prometheus](http://prometheus.io), which works by collecting metrics data by making requests of a URL endpoint provided by the application. Prometheus is widely supported inside Kubernetes, meaning that Prometheus also collects data from Kubernetes itself, and application data provided to Prometheus can also be used to automatically scale your application.
 
-The `prom-client` package provides an easy to use library that auto-instruments your application to collect metrics. It is then possible to expose the metrics on an endpoint for consumption by Prometheus.
+The `prom-client` package provides a library that auto-instruments your application to collect metrics. It is then possible to expose the metrics on an endpoint for consumption by Prometheus.
 
 Add a `/metrics` Prometheus endpoint to your Express.js application using the following steps:
 
@@ -302,11 +304,11 @@ Check that your metrics endpoint is running:
 
 For information on how to configure the `prom-client` library see the [prom-client documentation](https://github.com/siimon/prom-client#prometheus-client-for-nodejs---).
 
-You can install a local Prometheus server to graph and visualize the data, and additionally to set up alerts. For this workshop you'll use Prometheus once you've deployed your application to Kubernetes.
+You can install a local Prometheus server to graph and visualize the data, and additionally to set up alerts. For this workshop, you'll use Prometheus once you've deployed your application to Kubernetes.
 
 ### 4. Building your Application with Docker
 
-Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready to run format.
+Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready-to-run format.
 
 NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
 
@@ -358,7 +360,7 @@ Visit your applications endpoints to check that it is running successfully:
 
 ## 5. Packaging your Application with Helm
 
-In order to deploy your Docker image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which Docker image to use, how many replicas (instances) to deploy and much memory and CPU to provide to each.
+In order to deploy your Docker image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which Docker image to use, how many replicas (instances) to deploy, and how much memory and CPU to provide to each.
 
 Helm charts provide an easy way to package your application with this information.
 
@@ -431,7 +433,7 @@ helm install nodeserver \
    ```
 
 
-**Note**: If an error is encountered because the previous `docker run` is still running,delete and retry the helm install:
+**Note**: If an error is encountered because the previous `docker run` is still running, delete and retry the helm install:
 
    ```sh
    helm del --purge nodeserver
@@ -479,7 +481,7 @@ You can then run the following two commands in order to be able to connect to Pr
   kubectl --namespace prometheus port-forward %POD_NAME% 9090
   ```
 
-This may fail with a warning about status being "Pending" until Prometheus has started, retry once status is "Running" for all pods:
+This may fail with a warning about status being "Pending" until Prometheus has started, retry once the status is "Running" for all pods:
   ```sh
   kubectl -n prometheus get pods --watch
   ```
@@ -501,7 +503,7 @@ This will show a graph mapping the `nodejs_heap_size_used_bytes` across each of 
 <details>
 <summary>microk8s only</summary>
 
-If you encounter a problem where there are no nodejs metrics in the **Expression** box, your Prometheus deployment may not be scraping metrics form the nodeserver. To check your microk8s cluster is setup ok run the following command:
+If you encounter a problem where there are no nodejs metrics in the **Expression** box, your Prometheus deployment may not be scraping metrics from the nodeserver. To check your microk8s cluster is setup ok run the following command:
 
 ```sh
 microk8s.inspect
@@ -563,7 +565,7 @@ This should show the following screen:
 
 In order to connect Grafana to the Prometheus service, go to http://localhost:3001/datasources and click `Add Data Source`. Select `Prometheus`.
 
-This opens the a panel that should be filled out with the following entries:
+This opens a panel that should be filled out with the following entries:
 
 * Name: `Prometheus`
 * URL: `http://prometheus-server.prometheus.svc.cluster.local`
@@ -598,9 +600,9 @@ This will then open the dashboard, which will automatically start populating wit
 
 In order to extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar and select `Graph`.
 
-On some Grafana versions, after you click `Add panel` in toolbar, it is necessary to select `Choose Visualization` before selecting `Graph`.
+On some Grafana versions, after you click `Add panel` in the toolbar, it is necessary to select `Choose Visualization` before selecting `Graph`.
 
-This creates a blank graph. Select the `Panel Title` pull down menu and select `Edit`.
+This creates a blank graph. Select the `Panel Title` pull-down menu and select `Edit`.
 
 This opens an editor panel where you can select data that you'd like to graph.
 
