@@ -174,7 +174,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install helmet
    ```
 
-4. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. the [NodeShift Reference Architecture for Node.js]([NodeShift Reference Architecture - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) applications recommends using Pino, a JSON-based logger. 
+4. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. The [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) recommends using Pino, a JSON-based logger.
 
    Install Pino:
 
