@@ -149,8 +149,8 @@ The following steps cover creating a base Express.js application. Express.js is 
 1. Create a directory to host your project:
 
    ```sh
-   mkdir express-app
-   cd express-app
+   mkdir nodeserver
+   cd nodeserver
    ```
 
 2. Initialize your project with `npm` and install the Express.js module: 
@@ -174,7 +174,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install pino
    ```
 
-5. Create a file named `server.js`:
+5. Now, let's start creating our server. Create a file named `server.js`:
 
    ```sh
    touch server.js
@@ -205,10 +205,14 @@ The following steps cover creating a base Express.js application. Express.js is 
 
     ```sh
     npm start
+
+    > nodeserver@1.0.0 start /private/tmp/nodeserver
+    > node server.js
+
+   {"level":30,"time":1622040801251,"pid":21934,"hostname":"bgriggs-mac","msg":"Server listening on port 3000"}
     ```
 
-Navigate to [http://localhost:3000](http://localhost:3000) and you should see the server respond with 'Hello, World!'.
-
+Navigate to [http://localhost:3000](http://localhost:3000) and you should see the server respond with 'Hello, World!'. You can stop your server by entering `CTRL + C` in your terminal window.
 
 ### 2. Add Health Checks to your Application
 
@@ -228,15 +232,13 @@ Add a Health Check endpoint to your Express.js application using the following s
 
  Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
-Check that your `livenessProbe` Health Check endpoint is running:
-
-2. Start your application:
+2. Restart your application:
 
    ```sh
    npm start
    ```
 
-3. Visit the `live` endpoint [http://localhost:3000/live](http://localhost:3000/live).
+3. Check that your `livenessProbe` Health Check endpoint is running. Visit the `live` endpoint [http://localhost:3000/live](http://localhost:3000/live).
 
 For information more information on health/liveness checks, refer to the following:
  - [NodeShift Reference Architecture for Node.js Applications - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
@@ -272,14 +274,14 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
 
    ```js
    app.get('/metrics', async (req, res, next) => {
-   try {
-      res.set('Content-Type', Prometheus.register.contentType)
-      const metrics = await Prometheus.register.metrics()
-      res.end(metrics)
-   } catch {
-      res.end('')
-   }
-   })
+      try {
+         res.set('Content-Type', Prometheus.register.contentType);
+         const metrics = await Prometheus.register.metrics();
+         res.end(metrics);
+      } catch {
+         res.end('');
+      }
+   });
    ```
 
 Register the `app.get('/metrics')...` route after your `/live` route handler. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
@@ -323,13 +325,13 @@ Build a production Docker image for your Express.js application using the follow
 3. Build the Docker run image for your application:
 
    ```sh
-   docker build --tag express-app:1.0.0 --file Dockerfile-run .
+   docker build --tag nodeserver:1.0.0 --file Dockerfile-run .
    ```
 
-You have now built a Docker image for your application called `express-app` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
+You have now built a Docker image for your application called `nodeserver` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
 
   ```sh
-  docker run --interactive --publish 3000:3000 --tty express-app:1.0.0
+  docker run --interactive --publish 3000:3000 --tty nodeserver:1.0.0
   ```
 
 This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
@@ -389,10 +391,10 @@ Add a Helm chart for your Express.js application using the following steps:
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
 
-Go ahead and modify the `chart/express-app/values.yaml` file to use your image, and to deploy 3 replicas:
+Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
-2. Change the `repository` field to `nodeserver-run`
+2. Change the `repository` field to `nodeserver`
 3. Ensure that the `pullPolicy` is set to `IfNotPresent`
 4. Change the `replicaCount` value to `3` (Line 3)
 
@@ -410,20 +412,18 @@ Deploy your Express.js application into Kubernetes using the following steps:
 You will need to push the image into the kubernetes container registry so that microk8s can access it.
 
 ```sh
-docker tag nodeserver-run:1.0.0 localhost:32000/nodeserver-run:1.0.0
-docker push localhost:32000/nodeserver-run:1.0.0
+docker tag nodeserver:1.0.0 localhost:32000/nodeserver:1.0.0
+docker push localhost:32000/nodeserver:1.0.0
 helm install nodeserver \
-  --set image.repository=localhost:32000/nodeserver-run  chart/nodeserver
+  --set image.repository=localhost:32000/nodeserver  chart/nodeserver
 ```
 </details>
-
 
 1. Deploy your application into Kubernetes:
 
    ```sh
    helm install nodeserver chart/nodeserver
    ```
-
 
 **Note**: If an error is encountered because the previous `docker run` is still running, delete and retry the helm install:
 
