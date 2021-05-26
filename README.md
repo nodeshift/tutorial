@@ -142,14 +142,6 @@ $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 ```
 
-Now that Helm is installed, you should also configure access to the "stable" Helm repository as follows:
-
-```sh
-helm repo add stable https://charts.helm.sh/stable
-```
-
-This makes it easy for you to install a number of applications and services into your Kubernetes cluster. You'll use this to install Prometheus and Grafana later in the workshop.
-
 ### 1. Create your Express.js Application
 
 The following steps cover creating a base Express.js application. Express.js is a popular web server framework for Node.js.
