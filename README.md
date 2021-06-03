@@ -10,7 +10,7 @@ The workshop provides an introduction to cloud-native development with Node.js b
 
 ### Building a Cloud-Ready Express.js Application
 
-This will show you how to take a Node.js application and make it "cloud-ready" and adding support for Cloud Native Computing Foundation (CNCF) technologies.
+This will show you how to take a Node.js application and make it "cloud-ready" by adding support for Cloud Native Computing Foundation (CNCF) technologies.
 
 In this self-paced tutorial you will:
 
