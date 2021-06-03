@@ -10,7 +10,7 @@ The workshop provides an introduction to cloud-native development with Node.js b
 
 ### Building a Cloud-Ready Express.js Application
 
-This will show you how to take a Node.js application and make it "cloud-ready": adding support for Cloud Native Computing Foundation (CNCF) technologies using the package and templates provided by the [NodeShift](https://nodeshift.dev/) project.
+This will show you how to take a Node.js application and make it "cloud-ready" and adding support for Cloud Native Computing Foundation (CNCF) technologies.
 
 In this self-paced tutorial you will:
 
@@ -36,7 +36,7 @@ Before getting started, make sure you have the following prerequisites installed
     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
     - [microk8s](https://microk8s.io/#quick-start)
 1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.4.2
+   - **Note**: This workshop tested with Helm v3.5.4
 
 ### Setting up
 
@@ -304,7 +304,7 @@ You can install a local Prometheus server to graph and visualize the data, and a
 
 Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready-to-run format.
 
-NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
+NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of Dockerfile templates that can be used to build your Docker container and produce your image.
 
 For this workshop, you'll use the `Dockerfile-run` template, which builds a production-ready Docker image for your application.
 
@@ -316,7 +316,7 @@ Build a production Docker image for your Express.js application using the follow
    curl -fsSL -o Dockerfile-run https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
    ```
 
-2. Copy the `.dockerignore` file into the root of your project:
+2. Also, copy the `.dockerignore` file into the root of your project:
 
    ```sh
    curl -fsSL -o .dockerignore https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
@@ -432,15 +432,19 @@ helm install nodeserver \
    helm install nodeserver chart/nodeserver
    ```
 
-2. Ensure that all the "pods" associated with your application are running:
+2. Check that all the "pods" associated with your application are running:
 
    ```sh
    kubectl get pods
    ```
 
+In earlier steps, we set the `replicaCount` to `3`, so you should expect to see three `nodeserver-deployment-*` pods running.
+
 Now everything is up and running in Kubernetes. It is not possible to navigate to `localhost:3000` as usual because your cluster isn't part of the localhost network, and because there are several instances to choose from.
 
-You can forward the nodeserver-service to your laptop by:
+Kubernetes has a concept of a 'Service', which is an abstract way to expose an application running on a set of Pods as a network service. To access our service, we need to forward the port of the `nodeserver-service` to our local device:
+
+3. You can forward the `nodeserver-service` to your device by:
 
   ```sh
   kubectl port-forward service/nodeserver-service 3000
@@ -598,7 +602,7 @@ This creates a blank graph. Select the `Panel Title` pull-down menu and select `
 
 This opens an editor panel where you can select data that you'd like to graph.
 
-Type `nodejs_heap_size_used_bytes` into the data box (or `Metrics` box on some version of Grafana), and a graph of your applications CPU data will show on the panel. You may need to click the `Query` icon on the left to access the data box.
+Type `nodejs_heap_size_used_bytes` into the `Metrics` box, and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
 
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
