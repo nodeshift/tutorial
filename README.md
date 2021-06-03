@@ -368,7 +368,7 @@ Add a Helm chart for your Express.js application using the following steps:
    curl -fsSL -o main.tar.gz https://github.com/NodeShift/helm/archive/main.tar.gz
    ```
 
-2. Unzip the downloaded template chart:
+2. Untar the downloaded template chart:
 
    ```sh
    tar xfz main.tar.gz
