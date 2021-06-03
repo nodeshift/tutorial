@@ -379,7 +379,7 @@ Add a Helm chart for your Express.js application using the following steps:
    On Linux and macOS:
    ```sh
    mv helm-main/chart chart
-   rm -rf helm-main main.zip
+   rm -rf helm-main main.tar.gz
    ```
 
    On Windows:
@@ -578,7 +578,7 @@ The Grafana community provides a large number of pre-created dashboards which ar
 
 To install one of those dashboards, click on the `+` icon and select `Import`.
 
-In the provided panel, enter `1621` into the `Grafana.com Dashboard` field in order to import dashboard number 1621, and press `Tab`.
+In the provided panel, enter `1621` into the `Grafana.com Dashboard` field in order to import dashboard number 1621, and press `Load`.
 
 **Note**: If `1621` is not recognized, it may be necessary to download the JSON for [1621](https://grafana.com/grafana/dashboards/1621) (select `Download JSON`), and use `Upload JSON` in the Grafana UI.
 
