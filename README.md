@@ -10,7 +10,7 @@ The workshop provides an introduction to cloud-native development with Node.js b
 
 ### Building a Cloud-Ready Express.js Application
 
-This will show you how to take a Node.js application and make it "cloud-ready": adding support for Cloud Native Computing Foundation (CNCF) technologies using the package and templates provided by the [NodeShift](https://nodeshift.dev/) project.
+This will show you how to take a Node.js application and make it "cloud-ready" by adding support for Cloud Native Computing Foundation (CNCF) technologies.
 
 In this self-paced tutorial you will:
 
@@ -36,7 +36,7 @@ Before getting started, make sure you have the following prerequisites installed
     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
     - [microk8s](https://microk8s.io/#quick-start)
 1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.4.2
+   - **Note**: This workshop tested with Helm v3.5.4
 
 ### Setting up
 
@@ -142,14 +142,6 @@ $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 ```
 
-Now that Helm is installed, you should also configure access to the "stable" Helm repository as follows:
-
-```sh
-helm repo add stable https://charts.helm.sh/stable
-```
-
-This makes it easy for you to install a number of applications and services into your Kubernetes cluster. You'll use this to install Prometheus and Grafana later in the workshop.
-
 ### 1. Create your Express.js Application
 
 The following steps cover creating a base Express.js application. Express.js is a popular web server framework for Node.js.
@@ -157,8 +149,8 @@ The following steps cover creating a base Express.js application. Express.js is 
 1. Create a directory to host your project:
 
    ```sh
-   mkdir express-app
-   cd express-app
+   mkdir nodeserver
+   cd nodeserver
    ```
 
 2. Initialize your project with `npm` and install the Express.js module: 
@@ -182,7 +174,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install pino
    ```
 
-5. Create a file named `server.js`:
+5. Now, let's start creating our server. Create a file named `server.js`:
 
    ```sh
    touch server.js
@@ -213,10 +205,14 @@ The following steps cover creating a base Express.js application. Express.js is 
 
     ```sh
     npm start
+
+    > nodeserver@1.0.0 start /private/tmp/nodeserver
+    > node server.js
+
+   {"level":30,"time":1622040801251,"pid":21934,"hostname":"bgriggs-mac","msg":"Server listening on port 3000"}
     ```
 
-Navigate to [http://localhost:3000](http://localhost:3000) and you should see the server respond with 'Hello, World!'.
-
+Navigate to [http://localhost:3000](http://localhost:3000) and you should see the server respond with 'Hello, World!'. You can stop your server by entering `CTRL + C` in your terminal window.
 
 ### 2. Add Health Checks to your Application
 
@@ -236,15 +232,13 @@ Add a Health Check endpoint to your Express.js application using the following s
 
  Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
 
-Check that your `livenessProbe` Health Check endpoint is running:
-
-2. Start your application:
+2. Restart your application:
 
    ```sh
    npm start
    ```
 
-3. Visit the `live` endpoint [http://localhost:3000/live](http://localhost:3000/live).
+3. Check that your `livenessProbe` Health Check endpoint is running. Visit the `live` endpoint [http://localhost:3000/live](http://localhost:3000/live).
 
 For information more information on health/liveness checks, refer to the following:
  - [NodeShift Reference Architecture for Node.js Applications - Health Checks](https://github.com/nodeshift/nodejs-reference-architecture/blob/master/docs/operations/healthchecks.md)
@@ -280,14 +274,14 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
 
    ```js
    app.get('/metrics', async (req, res, next) => {
-   try {
-      res.set('Content-Type', Prometheus.register.contentType)
-      const metrics = await Prometheus.register.metrics()
-      res.end(metrics)
-   } catch {
-      res.end('')
-   }
-   })
+      try {
+         res.set('Content-Type', Prometheus.register.contentType);
+         const metrics = await Prometheus.register.metrics();
+         res.end(metrics);
+      } catch {
+         res.end('');
+      }
+   });
    ```
 
 Register the `app.get('/metrics')...` route after your `/live` route handler. This adds a `/metrics` endpoint to your application. This automatically starts collecting data from your application and exposes it in a format that Prometheus understands.
@@ -310,7 +304,7 @@ You can install a local Prometheus server to graph and visualize the data, and a
 
 Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready-to-run format.
 
-NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of best-practice Dockerfile templates that can be used to build your Docker container and produce your image.
+NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of Dockerfile templates that can be used to build your Docker container and produce your image.
 
 For this workshop, you'll use the `Dockerfile-run` template, which builds a production-ready Docker image for your application.
 
@@ -322,7 +316,7 @@ Build a production Docker image for your Express.js application using the follow
    curl -fsSL -o Dockerfile-run https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
    ```
 
-2. Copy the `.dockerignore` file into the root of your project:
+2. Also, copy the `.dockerignore` file into the root of your project:
 
    ```sh
    curl -fsSL -o .dockerignore https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
@@ -331,13 +325,13 @@ Build a production Docker image for your Express.js application using the follow
 3. Build the Docker run image for your application:
 
    ```sh
-   docker build --tag express-app:1.0.0 --file Dockerfile-run .
+   docker build --tag nodeserver:1.0.0 --file Dockerfile-run .
    ```
 
-You have now built a Docker image for your application called `express-app` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
+You have now built a Docker image for your application called `nodeserver` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
 
   ```sh
-  docker run --interactive --publish 3000:3000 --tty express-app:1.0.0
+  docker run --interactive --publish 3000:3000 --tty nodeserver:1.0.0
   ```
 
 This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
@@ -397,10 +391,10 @@ Add a Helm chart for your Express.js application using the following steps:
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
 
-Go ahead and modify the `chart/express-app/values.yaml` file to use your image, and to deploy 3 replicas:
+Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
-2. Change the `repository` field to `nodeserver-run`
+2. Change the `repository` field to `nodeserver`
 3. Ensure that the `pullPolicy` is set to `IfNotPresent`
 4. Change the `replicaCount` value to `3` (Line 3)
 
@@ -418,20 +412,18 @@ Deploy your Express.js application into Kubernetes using the following steps:
 You will need to push the image into the kubernetes container registry so that microk8s can access it.
 
 ```sh
-docker tag nodeserver-run:1.0.0 localhost:32000/nodeserver-run:1.0.0
-docker push localhost:32000/nodeserver-run:1.0.0
+docker tag nodeserver:1.0.0 localhost:32000/nodeserver:1.0.0
+docker push localhost:32000/nodeserver:1.0.0
 helm install nodeserver \
-  --set image.repository=localhost:32000/nodeserver-run  chart/nodeserver
+  --set image.repository=localhost:32000/nodeserver  chart/nodeserver
 ```
 </details>
-
 
 1. Deploy your application into Kubernetes:
 
    ```sh
    helm install nodeserver chart/nodeserver
    ```
-
 
 **Note**: If an error is encountered because the previous `docker run` is still running, delete and retry the helm install:
 
@@ -440,15 +432,19 @@ helm install nodeserver \
    helm install nodeserver chart/nodeserver
    ```
 
-2. Ensure that all the "pods" associated with your application are running:
+2. Check that all the "pods" associated with your application are running:
 
    ```sh
    kubectl get pods
    ```
 
+In earlier steps, we set the `replicaCount` to `3`, so you should expect to see three `nodeserver-deployment-*` pods running.
+
 Now everything is up and running in Kubernetes. It is not possible to navigate to `localhost:3000` as usual because your cluster isn't part of the localhost network, and because there are several instances to choose from.
 
-You can forward the nodeserver-service to your laptop by:
+Kubernetes has a concept of a 'Service', which is an abstract way to expose an application running on a set of Pods as a network service. To access our service, we need to forward the port of the `nodeserver-service` to our local device:
+
+3. You can forward the `nodeserver-service` to your device by:
 
   ```sh
   kubectl port-forward service/nodeserver-service 3000
@@ -606,7 +602,7 @@ This creates a blank graph. Select the `Panel Title` pull-down menu and select `
 
 This opens an editor panel where you can select data that you'd like to graph.
 
-Type `nodejs_heap_size_used_bytes` into the data box (or `Metrics` box on some version of Grafana), and a graph of your applications CPU data will show on the panel. You may need to click the `Query` icon on the left to access the data box.
+Type `nodejs_heap_size_used_bytes` into the `Metrics` box, and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
 
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
