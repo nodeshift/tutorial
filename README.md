@@ -339,11 +339,12 @@ This runs your Docker image in a Docker container, mapping port 3000 from the co
 <details>
 <summary>minikube only</summary>
 
-Docker runs in the minikube VM, so an additional step is
-required to expose the application to localhost:
+Docker runs in the minikube VM, so you'll need to access the application via the minikube IP address.
+
 ```sh
-kubectl port-forward service/nodeserver-service 3000
+open http://$(minikube ip):3000/
 ```
+
 </details>
 
 Visit your applications endpoints to check that it is running successfully:
