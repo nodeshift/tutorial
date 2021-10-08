@@ -93,6 +93,7 @@ Create the required CRUD api routes using the following steps:
    router.delete('/todos/:id', (req, res) => {
      res.json({
        message: 'Not yet implemented!'
+       
      });
    });
 
@@ -299,7 +300,41 @@ Starting the server and using CURL we can test our API:
 
 ## Validating inputs
 
-// TBD
+Any input that is passed to the API should be validated before it is used. This is important
+because using invalid inputs within your application could lead to failures and even worse
+may be crafted by an attacker to cause your application to do something unintended or return
+more information than you planned. A good example of this is
+[SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection).
+
+Try running:
+
+```shell
+curl -v -X POST http://localhost:3000/api/todos -H "Content-Type: application/json" -d '{"author": "nodeshift", "tasaxk": "Learn Node.js"}'
+
+```
+
+You'll notice that `task` is mispelled as `tasaxk` and from the output you can see that the request was rejected:
+
+```shell
+< HTTP/1.1 422 Unprocessable Entity
+```
+
+That is because we had added validation in the post method:
+
+```
+  const author = req.body.author;
+  const task = req.body.task;
+
+  if (!task || !author) {
+    res.status(422).send("Unprocessable Entity");
+    return;
+  }
+```
+
+This was straight forward because the input was simple. For more complex APIs you may want to use
+a JSON validator such as [ajv](https://www.npmjs.com/package/ajv). It is also something that using OpenAPI
+and API-First tools help with.
+
 
 ## Hardening headers with Helmet
 
