@@ -41,7 +41,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    ```js
    const express = require('express');
    const pino = require('pino')();
-
+const app = express();
    const PORT = process.env.PORT || 3000;
 
    app.get('/', (req, res) => {
