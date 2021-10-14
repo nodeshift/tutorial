@@ -340,7 +340,9 @@ and API-First tools help with.
 
 ## Hardening headers with Helmet
 
-Security is everyone’s responsibility. Express Helmet secures your Node.js application from some obvious threats. While writing a Node.js Express application, you can use Helmet to safeguard your application from usual security risks like XSS, Content Security Policy, and others.
+It's important to make any APIs that you expose as safe/secure as possible. In larger enterprise deployments this security may be provided by an API gateway like [Red Hat 3scale API Management](https://www.redhat.com/en/technologies/jboss-middleware/3scale). When that is not the case it's wise to use a package like express Helmet to secure your Node.js application from some obvious threats. You can use Helmet to safeguard your application from usual security risks like XSS, Content Security Policy, and others.
+
+In this section we'll show you how to add helmet to your application.
 
 Enable the `helmet` express middleware by following the steps:
 
