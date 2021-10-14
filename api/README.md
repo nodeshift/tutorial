@@ -150,6 +150,7 @@ The `server.js` should look like this:
 ```js
 const express = require('express');
 const pino = require('pino')();
+const app = express();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
