@@ -375,3 +375,13 @@ By using the `helmet()` middleware like this we are enabling the following helme
 - permittedCrossDomainPolicies
 - referrerPolicy
 - xssFilter
+
+At this point you have a REST API which supports the basic CRUD operations and is protected from some of the typical threats.
+
+## Wrap up and Next steps
+
+This tutorial provided you with a basic introduction to creating a READ API that implements the four CRUD operations and you should understand the underlying concepts. 
+
+If you have not already read some of the references we provided along the way now would be a great time to either go back in order to get a deeper level of understanding of some of the concepts or note them down to check out later.
+
+
