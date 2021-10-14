@@ -1,4 +1,4 @@
-# Building a CRUD API with Node.js
+# Building a CRUD REST API with Node.js
 
 ## Introduction
 
