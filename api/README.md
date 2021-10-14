@@ -53,7 +53,7 @@ const app = express();
    });
    ```
 
-Navigate to http://localhost:3000 and you should see the server respond with 'Hello, World!'. You can stop your server by entering CTRL + C in your terminal window.
+Start the application by running `node server.js` and then navigate to http://localhost:3000. You should see the server respond with 'Hello, World!'. You can stop your server by entering CTRL + C in your terminal window.
 
 ## Defining Routes
 
