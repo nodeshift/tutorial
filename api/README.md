@@ -219,7 +219,7 @@ Create a persistent layer for the todos and update the express routes following 
        id,
        author: author,
        task: task
-     });
+     };
 
      todos.push(todo);
 
