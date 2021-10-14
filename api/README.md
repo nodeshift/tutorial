@@ -59,7 +59,7 @@ Start the application by running `node server.js` and then navigate to http://lo
 
 ## Defining Routes
 
-A REST API provides endpoints for the basic CRUD operations. In this section we are going to define these endpoints by adding a routes. CRUD operations are often mapped to HTTP operations as follows:
+A REST API provides endpoints for the basic CRUD operations. In this section we are going to define these endpoints by adding routes. CRUD operations are often mapped to HTTP operations as follows:
 
 * create -> post
 * read -> get
