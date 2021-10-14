@@ -23,7 +23,7 @@ This workshop provides an introduction to cloud native development with Node.js.
   * [Interactive Tutorial](https://developers.redhat.com/developer-sandbox/activities/deploying-full-stack-javascript-applications-to-the-sandbox/part1)
 
 ## Resources
-  * [The Red Hat and IBM Node.js Reference architecture.]()
+  * [The Red Hat and IBM Node.js Reference architecture.](https://nodeshift.dev/nodejs-reference-architecture/)
     * The teams opinion on what components our customers and internal teams
 should use when building Node.js applications and guidance for how to be successful in production with those components.
 
