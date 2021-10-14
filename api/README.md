@@ -2,7 +2,9 @@
 
 ## Introduction
 
-// TBD: Tutorial Introduction
+Building a micro-service which provides a [REST API](https://www.redhat.com/en/topics/api/what-is-a-rest-api) is a common task as a Node.js developer. In this tutorial we will take you through the basic steps of creating an API that implements the four base operations of persistent storage: create, read,update, and delete ([CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)).  We will do this manually so that you learn the basics of what is going on behind the scenes.
+
+When developing APIs for larger enterprise applications you will often want to use OpenAPI and an API-first approach. You can lean more about that in [Building a Node.js service using the API-first approach](https://developers.redhat.com/blog/2019/01/14/building-a-node-js-service-using-the-api-first-approach).
 
 ## Installing Express
 
