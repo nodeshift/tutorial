@@ -179,7 +179,7 @@ Restart the server, navigate to http://localhost:3000/api/todos and you should s
 
 ## Data persistence logic
 
-// TBD: Introducing chapter
+The persistence layer is most often provided by a database. For our simple example we are going to avoid adding the complexity of configuration a database and simply store items in memory. We will update each the functions mapped into each of the CRUD operations through routes so that they update the in-memory array of items.
 
 Create a persistent layer for the todos and update the express routes following these steps:
 
