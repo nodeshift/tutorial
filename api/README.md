@@ -213,7 +213,7 @@ Create a persistent layer for the todos and update the express routes following 
        return;
      }
 
-     const id = todos.length();
+     const id = todos.length;
 
      const todo = {
        id,
