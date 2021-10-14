@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Building a micro-service which provides a [REST API](https://www.redhat.com/en/topics/api/what-is-a-rest-api) is a common task as a Node.js developer. In this tutorial we will take you through the basic steps of creating an API that implements the four base operations of persistent storage: create, read,update, and delete ([CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)).  We will do this manually so that you learn the basics of what is going on behind the scenes.
+Building a microservice which provides a [REST API](https://www.redhat.com/en/topics/api/what-is-a-rest-api) is a common task as a Node.js developer. In this tutorial, we will take you through the basic steps of creating an API that implements the four base operations of persistent storage: create, read, update, and delete ([CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)). We will do this manually so that you learn the basics of what is going on behind the scenes.
 
 When developing APIs for larger enterprise applications you will often want to use OpenAPI and an API-first approach. You can lean more about that in [Building a Node.js service using the API-first approach](https://developers.redhat.com/blog/2019/01/14/building-a-node-js-service-using-the-api-first-approach).
 
@@ -20,7 +20,7 @@ The following steps cover creating a base Express.js application. Express.js is 
 2. Initialize your project with `npm` and install the Express.js module:
 
    ```sh
-     npm init -y
+     npm init --yes
      npm install express
    ```
 
@@ -43,7 +43,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    ```js
    const express = require('express');
    const pino = require('pino')();
-const app = express();
+   const app = express();
    const PORT = process.env.PORT || 3000;
 
    app.get('/', (req, res) => {
@@ -59,7 +59,7 @@ Start the application by running `node server.js` and then navigate to http://lo
 
 ## Defining Routes
 
-A REST API provides endpoints for the basic CRUD operations. In this section we are going to define these endpoints by adding a routes. CRUD operations are often mapped to http operations as follows:
+A REST API provides endpoints for the basic CRUD operations. In this section we are going to define these endpoints by adding a routes. CRUD operations are often mapped to HTTP operations as follows:
 
 * create -> post
 * read -> get
@@ -68,7 +68,7 @@ A REST API provides endpoints for the basic CRUD operations. In this section we 
 
 We will add an implementation for each of these.
 
-Create the required CRUD api routes using the following steps:
+Create the required CRUD API routes using the following steps:
 
 1. Create a new file called `routes.js` and initialize a new express router:
 
@@ -78,7 +78,7 @@ Create the required CRUD api routes using the following steps:
    const router = express.Router();
    ```
 
-2. Register the CRUD api routes to the router:
+2. Register the CRUD API routes to the router:
 
    ```js
    router.get('/todos', (req, res) => {
@@ -119,7 +119,7 @@ Create the required CRUD api routes using the following steps:
    module.exports = router;
    ```
 
-4. Install two additional NPM packages needed for handling cors and parsing the request's body:
+4. Install two additional npm packages needed for handling cors and parsing the request's body:
 
    ```sh
    npm install body-parser cors
@@ -140,7 +140,7 @@ Create the required CRUD api routes using the following steps:
    ...
    ```
 
-   > If you want to learn more about CORS (Cross Origin Resource Sharing) take a look at <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">here</a>.
+   Note: If you want to learn more about CORS (Cross Origin Resource Sharing) take a look at <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">here</a>.
 
 5. Register the exported router as an express route right after the middleware registration in the `server.js` file:
 
@@ -186,7 +186,7 @@ Restart the server, navigate to http://localhost:3000/api/todos and you should s
 
 ## Data persistence logic
 
-The persistence layer is most often provided by a database. For our simple example we are going to avoid adding the complexity of configuration a database and simply store items in memory. We will update each the functions mapped into each of the CRUD operations through routes so that they update the in-memory array of items.
+The persistence layer is most often provided by a database. For our simple example we are going to avoid adding the complexity of configuring a database and simply store items in memory. We will update each the functions mapped into each of the CRUD operations through routes so that they update the in-memory array of items.
 
 Create a persistent layer for the todos and update the express routes following these steps:
 
@@ -196,7 +196,7 @@ Create a persistent layer for the todos and update the express routes following 
    let todos = []; // this is our in-memory persistence layer
    ```
 
-2. Use pino as the logger:
+2. Import `pino` as the logger:
 
    ```js
    const pino = require('pino')();
@@ -283,7 +283,7 @@ Create a persistent layer for the todos and update the express routes following 
    });
    ```
 
-Starting the server and using CURL we can test our API:
+Starting the server using `node server.js` and using cURL we can test our API:
 
 1. Create a new todo:
 
@@ -341,13 +341,11 @@ That is because we had added validation in the post method:
 ```
 
 This was straight forward because the input was simple. For more complex APIs you may want to use
-a JSON validator such as [ajv](https://www.npmjs.com/package/ajv). It is also something that using OpenAPI
-and API-First tools help with.
-
+a JSON validator such as [ajv](https://www.npmjs.com/package/ajv). It is also something that using OpenAPI and API-first tools help with.
 
 ## Hardening headers with Helmet
 
-It's important to make any APIs that you expose as safe/secure as possible. In larger enterprise deployments this security may be provided by an API gateway like [Red Hat 3scale API Management](https://www.redhat.com/en/technologies/jboss-middleware/3scale). When that is not the case it's wise to use a package like express Helmet to secure your Node.js application from some obvious threats. You can use Helmet to safeguard your application from usual security risks like XSS, Content Security Policy, and others.
+It's important to make any APIs that you expose as safe/secure as possible. In larger enterprise deployments this security may be provided by an API gateway like [Red Hat 3scale API Management](https://www.redhat.com/en/technologies/jboss-middleware/3scale). When that is not the case it's wise to use a package like Helmet to secure your Node.js application from some obvious threats. You can use Helmet to safeguard your application from usual security risks like XSS, Content Security Policy, and others.
 
 In this section we'll show you how to add helmet to your application.
 
@@ -359,7 +357,7 @@ Enable the `helmet` express middleware by following the steps:
    npm install helmet
    ```
 
-2. Register helmet as the **first** express middleware in `server.js`:
+2. Register helmet as the **first** middleware in `server.js`:
 
    ```js
    const helmet = require('helmet');
@@ -383,12 +381,10 @@ By using the `helmet()` middleware like this we are enabling the following helme
 - referrerPolicy
 - xssFilter
 
-At this point you have a REST API which supports the basic CRUD operations and is protected from some of the typical threats.
+At this point you have a REST API which supports the basic CRUD operations and is protected from some of typical threats.
 
-## Wrap up and Next steps
+## Wrap up and next steps
 
-This tutorial provided you with a basic introduction to creating a READ API that implements the four CRUD operations and you should understand the underlying concepts. 
+This tutorial provided you with a basic introduction to creating a REST API that implements the four CRUD operations and you should understand the underlying concepts.
 
 If you have not already read some of the references we provided along the way now would be a great time to either go back in order to get a deeper level of understanding of some of the concepts or note them down to check out later.
-
-
