@@ -27,8 +27,12 @@ This workshop provides an introduction to cloud native development with Node.js.
     * The teams opinion on what components our customers and internal teams
 should use when building Node.js applications and guidance for how to be successful in production with those components.
 
+  * [Red Hat Node.js Topic Page](https://developers.redhat.com/topics/nodejs)
 
 ## Contacts
-  * Bethany Griggs
-  * Lucas Holmquist
+  * Bethany Griggs - [Twitter](https://twitter.com/BethGriggs_)
+  * Lucas Holmquist - [Twitter](https://twitter.com/sienaluke)
+  * Michael Dawson - [Twitter](https://twitter.com/mhdawson1)
+  * Joe Sepi - [Twitter](https://twitter.com/joe_sepi)
+  * Ryan Jarvinen - [Twitter](https://twitter.com/ryanj)
 
