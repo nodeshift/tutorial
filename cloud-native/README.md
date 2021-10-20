@@ -230,7 +230,7 @@ Add a Health Check endpoint to your Express.js application using the following s
    app.get('/live', (req, res) => res.status(200).json({ status: 'ok' }));
    ```
 
- Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"UP","checks":[]}`.
+ Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"ok"}`.
 
 2. Restart your application:
 
