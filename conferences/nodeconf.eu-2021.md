@@ -11,7 +11,7 @@ This workshop provides an introduction to cloud native development with Node.js.
 ## Agenda
 
 * Cloud Native concepts Introduction
-  * Link to Slides - [Slides](../slides/Node_js_in_the_cloud.pdf)
+  * Link to Slides - [Slides](../conferences/slides/Node_js_in_the_cloud.pdf)
 
 * Cloud Native concepts Tutorial
   * Self-paced workshop - [instructions](../cloud-native/README.md)
