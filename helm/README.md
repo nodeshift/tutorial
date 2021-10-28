@@ -1,9 +1,5 @@
 # Deploying your Node.js App via Helm
 
-
-Link to prior workshop? - match their prereqs?
-Kube
-
 ### Packaging up your Node.js application into a Helm Chart
 
 This will show you how to create your own Helm Chart for your Node.js Application and how to tweak it to best fit your applications needs.
@@ -14,9 +10,7 @@ In this self-paced tutorial you will:
 - Add a dependency chart
 - Create liveiness probes
 
-The application you will use is the one created in the previous tutorial - LINK HERE
-
-
+The application you will use is the one created in the previous tutorial - https://github.com/nodeshift/mern-workshop
 
 ### Prerequisites
 
@@ -29,7 +23,7 @@ Before getting started, make sure you have the following prerequisites installed
     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
     - [microk8s](https://microk8s.io/#quick-start)
 1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm vX.Y.Z
+   - **Note**: This workshop tested with Helm v3.4.0
 
 ### Setting up
 
