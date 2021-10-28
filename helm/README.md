@@ -204,11 +204,6 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
    - name: mongodb
     version: 5.0.2
     repository: https://charts.bitnami.com/bitnami
-    import-values:
-      - usePassword: false
-         replicaSet.enabled: true
-         service.type: LoadBalancer
-         replicaSet.replicas.secondary: 3
    ```
 
    Then run the following command in terminal to download the chart:
@@ -299,6 +294,13 @@ spec:
         - containerPort: {{ .Values.frontend.service.servicePort}}
 ```
 
+What this creates is our frontend deployment, inside that is the pod that is running our frontend image plus its replicaset.
+
+`image` is the image we want the container to deploy using variables pulled from our `values.yaml` file.
+
+We also add the `frontend-selector` label to our pod which allows for our frontend service to connect with it.
+
+
 #### 4.3 Backend Service 
 
 Our third file will spawn the service for the backend part of our application. Create a file called `chart/myapp/templates/backend-service.yaml` and paste in the following:
@@ -365,7 +367,75 @@ spec:
             value: {{ .Values.backend.services.mongo.name }}
 ```
 
-### 5. Tests?
+Similar to our frontend deployment file, this file creates our backend deployment, with a key difference being the mongoDB information that is passed through to allow for communication with the mongo instance.
+
+### 5. Values file
+
+For the `values.yaml` file we are going to split it in 3 sections, have a read of each section and then add them all to your `values.yaml` file
+
+```yaml
+# Frontend
+frontend:
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: frontend 
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 200m
+        memory: 300Mi
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  service:
+    name: frontend
+    type: NodePort
+    servicePort: 80 # the port where nginx serves its traffic
+```
+These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
+
+```yaml
+# backend
+backend:
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: backend
+    tag: v1.0.0
+    pullPolicy: IfNotPresent
+    resources:
+      requests:
+        cpu: 200m
+        memory: 300Mi
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  service:
+    name: backend
+    type: NodePort
+    servicePort: 30555
+  services:
+    mongo:
+      url: mongo-mongodb
+      name: todos
+      env: production
+```
+
+These values are for the backend section. Here we pass through the image, tag, service information, and some mongoDB information to locate the instance.
+
+```yaml
+# mongo
+mongo:
+  usePassword: false
+  replicaSet.enabled: true
+  service.type: LoadBalancer
+  replicaSet.replicas.secondary: 3
+
+```
+
+Finally these values are passed through to the mongoDB chart we downloaded earlier.
 
 ### 6. Deploy your Helm Chart
 
