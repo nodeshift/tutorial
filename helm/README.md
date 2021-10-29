@@ -137,7 +137,7 @@ In your terminal inside the folder holding your application run:
 ```sh
 $ mkdir chart
 $ cd chart
-$ helm create
+$ helm create myapp
 ```
 
 This will create the following filestructure:
@@ -433,7 +433,7 @@ Finally these values are passed through to the mongoDB chart we downloaded earli
 
 ### 6. Deploy your Helm Chart
 
-First we need to build our docker images to deploy:
+First we need to build our docker images to deploy, from the root directory of the project run:
 
 ```sh
 $ docker build -f frontend/Dockerfile -t frontend:v1.0.0 frontend
