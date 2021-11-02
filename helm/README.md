@@ -196,8 +196,8 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
    ```yaml
    dependencies:
    - name: mongodb
-    version: 5.0.2
-    repository: https://charts.bitnami.com/bitnami
+     version: 5.0.2
+     repository: https://charts.bitnami.com/bitnami
    ```
 
    Then run the following command in terminal to download the chart:
@@ -226,7 +226,7 @@ tests
 These files represent the kubernetes objects that our Helm Chart will deploy - you can set up the deployment and service, and you can also create a serviceaccount for your app to use. The `NOTES.txt` file is just the notes that will be displayed to the user when they deploy your Helm Chart, you can use this to provide further instruction to them to get your application working. `_helpers.tpl` is where template helpers that you can re-use throughout the chart go. However for this tutorial we are going to use our own files so you can go ahead and remove the precreated files:
 
 ```sh
-$ rm myapp/templates/*
+$ rm -rf chart/myapp/templates/*
 ```
 
 Now lets move on to making our own template files!
@@ -252,7 +252,7 @@ spec:
     app: "frontend-selector"
 ```
 
-What this create will the service that serves our frontend and allows for it to be connected to the outside world. `nodePort` is the port we want our service to be accessible through so `localhost:30444` will take us to our frontend once deployed
+This will create the service that serves our frontend and allows for it to be connected to the outside world. `nodePort` is the port we want our service to be accessible through so `localhost:30444` will take us to our frontend once deployed
 
 #### 4.2 Frontend Deployment
 
@@ -365,7 +365,7 @@ Similar to our frontend deployment file, this file creates our backend deploymen
 
 ### 5. Values file
 
-For the `values.yaml` file we are going to split it in 3 sections, have a read of each section and then add them all to your `values.yaml` file
+For the `chart/myapp/values.yaml` file we are going to split it in 3 sections, have a read of each section and then add them all to your `values.yaml` file
 
 ```yaml
 # Frontend
