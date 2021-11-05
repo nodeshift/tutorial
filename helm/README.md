@@ -10,7 +10,7 @@ In this self-paced tutorial you will:
 - Add a dependency chart
 - Create liveiness probes
 
-The application you will use is the one created in the previous tutorial - https://github.com/nodeshift/mern-workshop
+The application you will use is the one created from - https://github.com/nodeshift/mern-workshop
 
 ### Prerequisites
 
@@ -91,10 +91,6 @@ microk8s.enable dns registry
 
 You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
 
-**Note**: The Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to install 1.14.
-
 </details>
 
 #### `minikube`
@@ -106,9 +102,6 @@ minikube start --kubernetes-version=1.14.7
 eval $(minikube docker-env)
 ```
 
-**Note** that the Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to run with 1.14.7.
 </details>
 
 #### Installing Helm
@@ -127,7 +120,16 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
 $ chmod 700 get_helm.sh
 $ ./get_helm.sh
-```   
+```
+
+#### Downloading the application
+
+Make sure you clone down the application repo and you are in the correct directory.
+
+```sh
+$ git clone https://github.com/nodeshift/mern-workshop.git
+$ cd mern-workshop
+```
 
 
 ### 1. Create your Helm Chart files
@@ -196,7 +198,7 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
    ```yaml
    dependencies:
    - name: mongodb
-     version: 5.0.2
+     version: 10.26.3
      repository: https://charts.bitnami.com/bitnami
    ```
 
@@ -421,8 +423,9 @@ These values are for the backend section. Here we pass through the image, tag, s
 
 ```yaml
 # mongo
-mongo:
-  usePassword: false
+mongodb:
+  auth:
+    enabled: false
   replicaSet.enabled: true
   service.type: LoadBalancer
   replicaSet.replicas.secondary: 3
