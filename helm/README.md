@@ -8,7 +8,7 @@ In this self-paced tutorial you will:
 
 - Create a Helm Chart
 - Add a dependency chart
-- Create liveiness probes
+- Create liveness probes
 
 The application you will use is the one created from - https://github.com/nodeshift/mern-workshop
 
@@ -142,7 +142,7 @@ $ cd chart
 $ helm create myapp
 ```
 
-This will create the following filestructure:
+This will create the following file structure:
 
 ```
 myapp/
@@ -155,11 +155,11 @@ myapp/
 ```
 
 
-These files will form the basis of your Helm Chart, lets explore the precreated files and make some nessacary changes
+These files will form the basis of your Helm Chart, lets explore the pre-created files and make some necessary changes.
 
 ### 2. Editing the .helmignore file
 
-   This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example if you have some secrets saved as a JSON file that you dont want to be inside the helm chart. For our application we dont have any files we need to protect so lets move on to the next step.
+   This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example, if you have some secrets saved as a JSON file that you do not want to be inside the helm chart. For our application we do not have any files we need to protect so let's move on to the next step.
 
 ### 3. The Chart.yaml file
 
@@ -176,9 +176,9 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
 
    `apiVersion: v2` signals that this chart is designed for Helm3 support _only_.
 
-   `version` is the charts version, increment this under semver everytime you update the chart
+   `version` is the charts version, increment this under semver every time you update the chart
 
-   `appVersion` is the version of the app you are deploying, this is to be increased everytime you increase the version of your app but does not impact the charts version 
+   `appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version 
 
    The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
 
@@ -193,7 +193,7 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
      email: FirstnameLastname@company.com
    ```
 
-   The final key thing we are going to add is a dependecy, our application needs mongoDB to run so we are going to call a premade mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
+   The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
 
    ```yaml
    dependencies:
@@ -202,7 +202,7 @@ These files will form the basis of your Helm Chart, lets explore the precreated 
      repository: https://charts.bitnami.com/bitnami
    ```
 
-   Then run the following command in terminal to download the chart:
+   Then run the following command in the terminal to download the chart:
    
    ```sh
    helm dependency update
@@ -225,17 +225,17 @@ serviceaccount.yaml
 tests
 ```
 
-These files represent the kubernetes objects that our Helm Chart will deploy - you can set up the deployment and service, and you can also create a serviceaccount for your app to use. The `NOTES.txt` file is just the notes that will be displayed to the user when they deploy your Helm Chart, you can use this to provide further instruction to them to get your application working. `_helpers.tpl` is where template helpers that you can re-use throughout the chart go. However for this tutorial we are going to use our own files so you can go ahead and remove the precreated files:
+These files represent the kubernetes objects that our Helm Chart will deploy - you can set up the deployment and service, and you can also create a serviceaccount for your app to use. The `NOTES.txt` file is just the notes that will be displayed to the user when they deploy your Helm Chart, you can use this to provide further instruction to them to get your application working. `_helpers.tpl` is where template helpers that you can re-use throughout the chart go. However for this tutorial we are going to use our own files so you can go ahead and remove the generated files:
 
 ```sh
 $ rm -rf chart/myapp/templates/*
 ```
 
-Now lets move on to making our own template files!
+Now let's move on to making our own template files!
 
 #### 4.1 Frontend Service
 
-The first template we will create will deploy the service for our frontend. Lets create a file called `chart/myapp/templates/frontend-service.yaml` and paste in the following:
+The first template we will create will deploy the service for our frontend. Let's create a file called `chart/myapp/templates/frontend-service.yaml` and paste in the following:
 
 ```yaml
 apiVersion: v1
@@ -367,7 +367,7 @@ Similar to our frontend deployment file, this file creates our backend deploymen
 
 ### 5. Values file
 
-For the `chart/myapp/values.yaml` file we are going to split it in 3 sections, have a read of each section and then add them all to your `values.yaml` file
+For the `chart/myapp/values.yaml` file we are going to split it into 3 sections, have a read of each section and then add them all to your `values.yaml` file
 
 ```yaml
 # Frontend
@@ -448,6 +448,23 @@ Once the images are built you can now deploy your helm chart
 ```sh
 $ helm install myapp chart/myapp
 ```
+
+Check your pods are running by running:
+
+```sh
+$ kubectl get pods
+```
+
+You should get a similar output to:
+
+```sh
+NAME                                   READY   STATUS    RESTARTS   AGE
+backend-deployment-5d6bb8c5f8-xm4bv    1/1     Running   0          67s
+frontend-deployment-6c7779ff9d-xjdrv   1/1     Running   0          67s
+myapp-mongodb-64df664c5b-st8fb         1/1     Running   0          66s
+```
+
+You can access your application at `http://localhost:30444/`
 
 ### Congratulations! 🎉
 
