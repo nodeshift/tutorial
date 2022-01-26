@@ -99,6 +99,12 @@ eval $(minikube docker-env)
 
 #### Microk8s
 
+https://microk8s.io/
+
+<details>
+
+Follow below steps
+
 1. Install microk8s through snap 
 
     <details>
@@ -182,6 +188,7 @@ eval $(minikube docker-env)
       microk8s start
       ```
     </details>
+</details>
 
 ### Helm
 
@@ -195,7 +202,7 @@ Choose one of the below section to install helm. For further indo please visit h
 - Windows with Chocolatey: `choco install kubernetes-helm`
 
 #### Using microk8s:
-If you installed microk8s, use below method to install helm
+If you installed microk8s on previous steps, use below method to install helm
 
 ```sh
 $ microk8s.enable helm3
