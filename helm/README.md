@@ -1,6 +1,6 @@
 # Deploying your Node.js App via Helm
 
-### Packaging up your Node.js application into a Helm Chart
+## Packaging up your Node.js application into a Helm Chart
 
 This will show you how to create your own Helm Chart for your Node.js Application and how to tweak it to best fit your applications needs.
 
@@ -12,43 +12,29 @@ In this self-paced tutorial you will:
 
 The application you will use is the one created from - https://github.com/nodeshift/mern-workshop
 
-### Prerequisites
+## Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
 1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Docker and Kubernetes
-   - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
-   - ***On Linux***: Docker for Desktop is not available, follow the docker for linux instructions below and Kubernetes alternatives are:
-    - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-    - [microk8s](https://microk8s.io/#quick-start)
+1. Docker
+   - **_On Mac_**: [Docker Desktop](https://docs.docker.com/desktop/mac/install/)
+   - **_On Windows_**: [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
+   - **_On Linux_**: [Docker](https://docs.docker.com/desktop/windows/install/)
+1. Kubernetes
+   - **_On Mac_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
+   - **_On Windows_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
+   - **_On Linux_**: Docker Desktop is not available on linux, hence you can enable Kubernetes by choosing one of below alternatives:
+     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+     - [microk8s](https://microk8s.io/#quick-start)
 1. Helm v3 - https://helm.sh/docs/intro/install/
    - **Note**: This workshop tested with Helm v3.4.0
 
-### Setting up
+## Setting up
 
-How to start Kubernetes will depend on how you intend to run it.
+### Docker
 
-#### Starting Kubernetes
-
-#### `Docker for Desktop`
-
-Ensure you have installed Docker for Desktop and enabled Kubernetes within the application. To do so:
-
-On macOS:
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
-
-On Windows:
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
-
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
-
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
-
-#### Docker on linux
+#### On linux
 
 <details>
 Install Docker Engine Community using
@@ -75,30 +61,37 @@ sudo apt install docker-compose
 
 </details>
 
-#### `microk8s`
+### Kubernetes
+
+#### On macOS:
+
+1. Select the Docker icon in the Menu Bar
+2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+
+Ensure you have installed Docker Desktop and enabled Kubernetes within the application. To do so:
+
+#### On Windows:
+
+1. Select the Docker icon in the notification area of the taskbar.
+2. Click `Settings > Kubernetes > Enable Kubernetes`.
+
+It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+
+1. Select the Docker icon in the Menu Bar
+2. Click `Kubernetes` and select the `docker-for-desktop` context
+
+#### On Linux:
+
+You can install Kubernetes choosing **one** of below options:
+
+#### minikube
+
+https://minikube.sigs.k8s.io/docs/start
 
 <details>
 
 ```sh
-snap install --channel 1.14/stable microk8s --classic
-sudo usermod -a -G microk8s ibmuser
-sudo microk8s.start
-sudo snap alias microk8s.kubectl kubectl
-export PATH=/snap/bin:$PATH
-sudo microk8s.config >~/.kube/config
-microk8s.enable dns registry
-```
-
-You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
-
-</details>
-
-#### `minikube`
-
-<details>
-
-```sh
-minikube start --kubernetes-version=1.14.7
+minikube start
 eval $(minikube docker-env)
 ```
 
