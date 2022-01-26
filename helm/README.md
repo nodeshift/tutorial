@@ -209,7 +209,7 @@ $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 ```
 
-#### Downloading the application
+## Downloading the application
 
 Make sure you clone down the application repo and you are in the correct directory.
 
@@ -217,7 +217,6 @@ Make sure you clone down the application repo and you are in the correct directo
 $ git clone https://github.com/nodeshift/mern-workshop.git
 $ cd mern-workshop
 ```
-
 
 ### 1. Create your Helm Chart files
 
@@ -227,6 +226,13 @@ In your terminal inside the folder holding your application run:
 $ mkdir chart
 $ cd chart
 $ helm create myapp
+```
+or if you are using microk8s
+
+```sh
+$ mkdir chart
+$ cd chart
+$ microk8s helm3 create myapp
 ```
 
 This will create the following file structure:
@@ -241,12 +247,11 @@ myapp/
     └── tests/    # The test files
 ```
 
-
 These files will form the basis of your Helm Chart, lets explore the pre-created files and make some necessary changes.
 
 ### 2. Editing the .helmignore file
 
-   This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example, if you have some secrets saved as a JSON file that you do not want to be inside the helm chart. For our application we do not have any files we need to protect so let's move on to the next step.
+This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example, if you have some secrets saved as a JSON file that you do not want to be inside the helm chart. For our application we do not have any files we need to protect so let's move on to the next step.
 
 ### 3. The Chart.yaml file
 
@@ -267,7 +272,7 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
 
    `appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version 
 
-   The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
+The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
 
    ```yaml
    kubeVersion: '>= 1.21.0-0'
@@ -280,7 +285,7 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
      email: FirstnameLastname@company.com
    ```
 
-   The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
+The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
 
    ```yaml
    dependencies:
@@ -293,6 +298,10 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
    
    ```sh
    helm dependency update
+   ```
+  or if you are using microk8s 
+   ```sh
+   microk8s helm3 dependency update
    ```
 
 ### 4. Template files
@@ -561,4 +570,10 @@ Once you are finished you can uninstall the chart by running:
 
 ```sh
 $ helm uninstall myapp
+```
+
+or with microk8s
+
+```sh
+$ microk8s helm3 uninstall myapp
 ```
