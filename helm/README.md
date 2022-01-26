@@ -544,6 +544,15 @@ First we need to build our docker images to deploy, from the root directory of t
 $ docker build -f frontend/Dockerfile -t frontend:v1.0.0 frontend
 $ docker build -f backend/Dockerfile -t backend:v1.0.0 backend
 ```
+or if you are using microk8s
+
+```sh
+$ docker build -f frontend/Dockerfile -t localhost:32000/frontend:v1.0.0 frontend
+$ docker build -f backend/Dockerfile -t localhost:32000/backend:v1.0.0 backend
+
+$ docker push localhost:32000/backend:v1.0.0
+$ docker push localhost:32000/frontend:v1.0.0
+```
 
 Once the images are built you can now deploy your helm chart
 
@@ -551,10 +560,21 @@ Once the images are built you can now deploy your helm chart
 $ helm install myapp chart/myapp
 ```
 
+or if you are using microk8s 
+
+```sh
+$ microk8s helm3 install myapp chart/myapp
+```
+
 Check your pods are running by running:
 
 ```sh
 $ kubectl get pods
+```
+or if you are using microk8s
+
+```sh
+$ microk8s kubectl get pods
 ```
 
 You should get a similar output to:
