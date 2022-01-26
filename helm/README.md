@@ -586,11 +586,49 @@ frontend-deployment-6c7779ff9d-xjdrv   1/1     Running   0          67s
 myapp-mongodb-64df664c5b-st8fb         1/1     Running   0          66s
 ```
 
-You can access your application at `http://localhost:30444/`
+Also, by viewing the logs of the backend service with below command
+
+```sh
+kubectl logs backend-deployment-xxxxxxxx-xxxxx -f
+```
+
+or for microk8s
+
+```sh
+microk8s kubectl logs backend-deployment-xxxxxxxx-xxxxx -f 
+```
+
+you should get below message
+
+`Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
+
+
+No you can access your application at `http://localhost:30444/`
 
 ### Congratulations! 🎉
 
 You have now created a Helm Chart which deploys a frontend and a backend whilst also calling and installing a dependency chart from the internet.
+
+### Interacting with the application
+
+By visiting `http://localhost:30444/` you should be able to see the UI as shown on the image below
+
+![Application ui](/helm/images/frontend-initial-ui.png)
+
+Lets add an item by filling the textbox and clicking on the `add new toDo` button
+
+![Adding item](/helm/images/frontend-add-item.png)
+
+After clicking the `Add new ToDo` button, the item should be added on the list.
+You should also be able to see below message on the backend service logs.
+
+`Creating Todo for NodeConfEU Clean the bicycle`
+
+![Added item](/helm/images/frontend-added-item.png)
+
+Click the x button next to the todo item and it should be removed
+
+### Uninstalling the App
 
 Once you are finished you can uninstall the chart by running:
 
