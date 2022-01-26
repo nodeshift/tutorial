@@ -392,8 +392,7 @@ What this creates is our frontend deployment, inside that is the pod that is run
 
 We also add the `frontend-selector` label to our pod which allows for our frontend service to connect with it.
 
-
-#### 4.3 Backend Service 
+#### 4.3 Backend Service
 
 Our third file will spawn the service for the backend part of our application. Create a file called `chart/myapp/templates/backend-service.yaml` and paste in the following:
 
@@ -488,6 +487,8 @@ frontend:
 ```
 These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
+In case of microk8s replace  `repository: frontend` with `repository: localhost:32000/frontend`
+
 ```yaml
 # backend
 backend:
@@ -510,21 +511,26 @@ backend:
     servicePort: 30555
   services:
     mongo:
-      url: mongo-mongodb
+      url: myapp-mongodb
       name: todos
       env: production
 ```
 
 These values are for the backend section. Here we pass through the image, tag, service information, and some mongoDB information to locate the instance.
 
+In case of microk8s replace  `repository: backend` with `repository: localhost:32000/backend`
+
 ```yaml
 # mongo
 mongodb:
   auth:
     enabled: false
-  replicaSet.enabled: true
-  service.type: LoadBalancer
-  replicaSet.replicas.secondary: 3
+  replicaSet:
+    enabled: true
+    replicas:
+      secondary: 3
+  service:
+    type: LoadBalancer
 
 ```
 
