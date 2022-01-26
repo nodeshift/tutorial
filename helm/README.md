@@ -187,13 +187,21 @@ eval $(minikube docker-env)
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
-**Using a Package Manager:**
+Choose one of the below section to install helm. For further indo please visit https://helm.sh/docs/intro/install/
+#### Using a Package Manager:
 
-* macOS with Homebrew: `brew install helm`
-* Linux with Snap: `sudo snap install helm --classic`
-* Windows with Chocolatey: `choco install kubernetes-helm`
+- macOS with Homebrew: `brew install helm`
+- Linux with Snap: `sudo snap install helm --classic`
+- Windows with Chocolatey: `choco install kubernetes-helm`
 
-**Using a Script:**
+#### Using microk8s:
+If you installed microk8s, use below method to install helm
+
+```sh
+$ microk8s.enable helm3
+```
+
+#### Using a Script:
 
 ```sh
 $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
