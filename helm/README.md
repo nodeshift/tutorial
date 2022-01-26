@@ -97,7 +97,93 @@ eval $(minikube docker-env)
 
 </details>
 
-#### Installing Helm
+#### Microk8s
+
+1. Install microk8s through snap 
+
+    <details>
+        <summary>Installation</summary>
+
+    ```sh
+    snap install microk8s --classic
+    microk8s status --wait-ready
+    microk8s enable dashboard dns registry istio
+    ```
+    for further details please visit: https://microk8s.io
+
+    Enabling private registry in microk8s
+    </details>
+
+1. Enable pushing to insecure registry
+
+    <details>
+    
+    Create file `/etc/docker/daemon.json` and add the following lines:
+
+
+    ```
+    {
+        "insecure-registries" : ["localhost:32000"] 
+    }
+    ```
+
+    restart docker
+
+    ```
+    sudo systemctl restart docker
+    ```
+    </details>
+
+
+1. Enable private registry for Microk8s
+
+    *Use `microk8s ctr version` command to fetch Microk8s version*
+
+    <details>
+        <summary>Version 1.23 or newer</summary>
+
+    ```
+    sudo mkdir -p /var/snap/microk8s/current/args/certs.d/localhost:32000
+    sudo touch /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
+    ```
+    Then, edit the file we just created and make sure the contents are as follows:
+
+    ```
+    # /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
+    server = "http://localhost:32000"
+
+    [host."localhost:32000"]
+    capabilities = ["pull", "resolve"]
+    ```
+
+    Restart MicroK8s to have the new configuration loaded:
+    ```
+    microk8s stop
+    microk8s start
+    ```
+
+    for further details please visit: https://microk8s.io/docs/registry-private on the **For MicroK8s version 1.23 or newer** section
+    </details>
+
+    <details>
+      <summary>Version 1.22 or older</summary>
+
+      We need to edit `/var/snap/microk8s/current/args/containerd-template.toml` and add the following under `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]`:
+
+      ```
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:32000"]
+      endpoint = ["http://localhost:32000"]
+      ```
+
+      Restart MicroK8s to have the new configuration loaded:
+
+      ```
+      microk8s stop
+      microk8s start
+      ```
+    </details>
+
+### Helm
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
