@@ -20,7 +20,7 @@ Before getting started, make sure you have the following prerequisites installed
 1. Docker
    - **_On Mac_**: [Docker Desktop](https://docs.docker.com/desktop/mac/install/)
    - **_On Windows_**: [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
-   - **_On Linux_**: [Docker](https://docs.docker.com/desktop/windows/install/)
+   - **_On Linux_**: [Docker](https://docs.docker.com/engine/install/#server)
 1. Kubernetes
    - **_On Mac_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
    - **_On Windows_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
