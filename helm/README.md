@@ -194,7 +194,7 @@ Follow below steps
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
-Choose one of the below section to install helm. For further indo please visit https://helm.sh/docs/intro/install/
+Choose one of the below section to install helm. For further information please visit https://helm.sh/docs/intro/install/
 #### Using a Package Manager:
 
 - macOS with Homebrew: `brew install helm`
