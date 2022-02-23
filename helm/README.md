@@ -53,12 +53,6 @@ sudo gpasswd -a $USER docker
 sudo service docker restart
 ```
 
-Install docker compose
-
-```sh
-sudo apt install docker-compose
-```
-
 </details>
 
 ### Kubernetes
