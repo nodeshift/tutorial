@@ -105,7 +105,13 @@ Follow below steps
       <summary>Installation</summary>
 
     ```sh
-    snap install microk8s --classic
+    sudo snap install microk8s --classic
+    sudo usermod -a -G microk8s $USER
+    sudo chown -f -R $USER ~/.kube
+    ```
+    
+    After this, reload the user groups either via a reboot or by running 'newgrp microk8s'.
+    ```sh
     microk8s status --wait-ready
     microk8s enable dashboard dns registry istio
     ```
