@@ -116,7 +116,11 @@ Follow below steps
     microk8s enable dashboard dns registry istio
     ```
 
-    Enabling private registry in microk8s
+    Add an alias
+    ```sh
+    sudo snap alias microk8s.kubectl kubectl
+    ```
+    for further details please visit: https://microk8s.io
     </details>
 
 1. Enable pushing to insecure registry
