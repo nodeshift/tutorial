@@ -108,14 +108,13 @@ Follow below steps
 1. Install microk8s through snap 
 
     <details>
-        <summary>Installation</summary>
+      <summary>Installation</summary>
 
     ```sh
     snap install microk8s --classic
     microk8s status --wait-ready
     microk8s enable dashboard dns registry istio
     ```
-    for further details please visit: https://microk8s.io
 
     Enabling private registry in microk8s
     </details>
@@ -202,7 +201,6 @@ Choose one of the below section to install helm. For further information please 
 - Windows with Chocolatey: `choco install kubernetes-helm`
 
 #### Using microk8s:
-If you installed microk8s on previous steps, use below method to install helm
 
 ```sh
 $ microk8s.enable helm3
@@ -233,13 +231,6 @@ In your terminal inside the folder holding your application run:
 $ mkdir chart
 $ cd chart
 $ helm create myapp
-```
-or if you are using microk8s
-
-```sh
-$ mkdir chart
-$ cd chart
-$ microk8s helm3 create myapp
 ```
 
 This will create the following file structure:
@@ -283,7 +274,7 @@ The rest of the fields are self explanatory but lets add some more information t
 
    ```yaml
    kubeVersion: '>= 1.21.0-0'
-   keywords:   
+   keywords:
    - nodejs
    - express
    - mern
@@ -304,11 +295,9 @@ The final key thing we are going to add is a dependency, our application needs m
    Then run the following command in the terminal to download the chart:
    
    ```sh
+   cd myapp
    helm dependency update
-   ```
-  or if you are using microk8s 
-   ```sh
-   microk8s helm3 dependency update
+   cd ..
    ```
 
 ### 4. Template files
@@ -567,21 +556,10 @@ Once the images are built you can now deploy your helm chart
 $ helm install myapp chart/myapp
 ```
 
-or if you are using microk8s 
-
-```sh
-$ microk8s helm3 install myapp chart/myapp
-```
-
 Check your pods are running by running:
 
 ```sh
 $ kubectl get pods
-```
-or if you are using microk8s
-
-```sh
-$ microk8s kubectl get pods
 ```
 
 You should get a similar output to:
@@ -598,13 +576,6 @@ Also, by viewing the logs of the backend service with below command
 ```sh
 kubectl logs backend-deployment-xxxxxxxx-xxxxx -f
 ```
-
-or for microk8s
-
-```sh
-microk8s kubectl logs backend-deployment-xxxxxxxx-xxxxx -f 
-```
-
 you should get below message
 
 `Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
@@ -641,10 +612,4 @@ Once you are finished you can uninstall the chart by running:
 
 ```sh
 $ helm uninstall myapp
-```
-
-or with microk8s
-
-```sh
-$ microk8s helm3 uninstall myapp
 ```
