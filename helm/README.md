@@ -159,12 +159,6 @@ Follow below steps
     capabilities = ["pull", "resolve"]
     ```
 
-    Restart MicroK8s to have the new configuration loaded:
-    ```
-    microk8s stop
-    microk8s start
-    ```
-
     for further details please visit: https://microk8s.io/docs/registry-private on the **For MicroK8s version 1.23 or newer** section
     </details>
 
@@ -177,14 +171,14 @@ Follow below steps
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:32000"]
       endpoint = ["http://localhost:32000"]
       ```
-
-      Restart MicroK8s to have the new configuration loaded:
-
-      ```
-      microk8s stop
-      microk8s start
-      ```
     </details>
+
+Restart MicroK8s to have the new configuration loaded:
+  ```sh
+  microk8s stop
+  microk8s start
+  microk8s kubectl config view --raw >~/.kube/config
+  ```
 </details>
 
 ### Helm
@@ -568,6 +562,8 @@ backend-deployment-5d6bb8c5f8-xm4bv    1/1     Running   0          67s
 frontend-deployment-6c7779ff9d-xjdrv   1/1     Running   0          67s
 myapp-mongodb-64df664c5b-st8fb         1/1     Running   0          66s
 ```
+
+Wait for some time until mongo status is running
 
 Also, by viewing the logs of the backend service with below command
 
