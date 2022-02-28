@@ -1,6 +1,6 @@
 # Deploying your Node.js App via Helm
 
-### Packaging up your Node.js application into a Helm Chart
+## Packaging up your Node.js application into a Helm Chart
 
 This will show you how to create your own Helm Chart for your Node.js Application and how to tweak it to best fit your applications needs.
 
@@ -12,43 +12,29 @@ In this self-paced tutorial you will:
 
 The application you will use is the one created from - https://github.com/nodeshift/mern-workshop
 
-### Prerequisites
+## Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
 1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Docker and Kubernetes
-   - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
-   - ***On Linux***: Docker for Desktop is not available, follow the docker for linux instructions below and Kubernetes alternatives are:
-    - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-    - [microk8s](https://microk8s.io/#quick-start)
+1. Docker
+   - **_On Mac_**: [Docker Desktop](https://docs.docker.com/desktop/mac/install/)
+   - **_On Windows_**: [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
+   - **_On Linux_**: [Docker](https://docs.docker.com/engine/install/#server)
+1. Kubernetes
+   - **_On Mac_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
+   - **_On Windows_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
+   - **_On Linux_**: Docker Desktop is not available on linux, hence you can enable Kubernetes by choosing one of below alternatives:
+     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+     - [microk8s](https://microk8s.io/#quick-start)
 1. Helm v3 - https://helm.sh/docs/intro/install/
    - **Note**: This workshop tested with Helm v3.4.0
 
-### Setting up
+## Setting up
 
-How to start Kubernetes will depend on how you intend to run it.
+### Docker
 
-#### Starting Kubernetes
-
-#### `Docker for Desktop`
-
-Ensure you have installed Docker for Desktop and enabled Kubernetes within the application. To do so:
-
-On macOS:
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
-
-On Windows:
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
-
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
-
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
-
-#### Docker on linux
+#### On linux
 
 <details>
 Install Docker Engine Community using
@@ -63,58 +49,163 @@ Add the user to the docker group (optional for part 1, required for part 2 and 3
 
 ```sh
 sudo groupadd docker
-sudo gpasswd -a $USER docker
-sudo service docker restart
+sudo usermod -aG docker $USER
 ```
 
-Install docker compose
-
-```sh
-sudo apt install docker-compose
-```
+Log out and log back in so that your group membership is re-evaluated.
 
 </details>
 
-#### `microk8s`
+### Kubernetes
+
+#### On macOS:
+
+1. Select the Docker icon in the Menu Bar
+2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+
+Ensure you have installed Docker Desktop and enabled Kubernetes within the application. To do so:
+
+#### On Windows:
+
+1. Select the Docker icon in the notification area of the taskbar.
+2. Click `Settings > Kubernetes > Enable Kubernetes`.
+
+It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+
+1. Select the Docker icon in the Menu Bar
+2. Click `Kubernetes` and select the `docker-for-desktop` context
+
+#### On Linux:
+
+You can install Kubernetes choosing **one** of below options:
+
+#### minikube
+
+https://minikube.sigs.k8s.io/docs/start
 
 <details>
 
 ```sh
-snap install --channel 1.14/stable microk8s --classic
-sudo usermod -a -G microk8s ibmuser
-sudo microk8s.start
-sudo snap alias microk8s.kubectl kubectl
-export PATH=/snap/bin:$PATH
-sudo microk8s.config >~/.kube/config
-microk8s.enable dns registry
-```
-
-You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
-
-</details>
-
-#### `minikube`
-
-<details>
-
-```sh
-minikube start --kubernetes-version=1.14.7
+minikube start
 eval $(minikube docker-env)
 ```
 
 </details>
 
-#### Installing Helm
+#### Microk8s
+
+https://microk8s.io/
+
+<details>
+
+Follow below steps
+
+1. Install microk8s through snap 
+
+    <details>
+      <summary>Installation</summary>
+
+    ```sh
+    sudo snap install microk8s --classic
+    sudo usermod -a -G microk8s $USER
+    sudo chown -f -R $USER ~/.kube
+    ```
+    
+    After this, reload the user groups either via a reboot or by running 'newgrp microk8s'.
+    ```sh
+    microk8s status --wait-ready
+    microk8s enable dashboard dns registry istio
+    ```
+
+    Add an alias
+    ```sh
+    sudo snap alias microk8s.kubectl kubectl
+    ```
+    for further details please visit: https://microk8s.io
+    </details>
+
+1. Enable pushing to insecure registry
+
+    <details>
+    
+    Create file `/etc/docker/daemon.json` and add the following lines:
+
+
+    ```
+    {
+        "insecure-registries" : ["localhost:32000"] 
+    }
+    ```
+
+    restart docker
+
+    ```
+    sudo systemctl restart docker
+    ```
+    </details>
+
+
+1. Enable private registry for Microk8s
+
+    *Use `microk8s ctr version` command to fetch Microk8s version*
+
+    <details>
+        <summary>Version 1.23 or newer</summary>
+
+    ```
+    sudo mkdir -p /var/snap/microk8s/current/args/certs.d/localhost:32000
+    sudo touch /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
+    ```
+    Then, edit the file we just created and make sure the contents are as follows:
+
+    ```
+    # /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
+    server = "http://localhost:32000"
+
+    [host."localhost:32000"]
+    capabilities = ["pull", "resolve"]
+    ```
+
+    for further details please visit: https://microk8s.io/docs/registry-private on the **For MicroK8s version 1.23 or newer** section
+    </details>
+
+    <details>
+      <summary>Version 1.22 or older</summary>
+
+      We need to edit `/var/snap/microk8s/current/args/containerd-template.toml` and add the following under `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]`:
+
+      ```
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:32000"]
+      endpoint = ["http://localhost:32000"]
+      ```
+    </details>
+
+Restart MicroK8s to have the new configuration loaded:
+  ```sh
+  microk8s stop
+  microk8s start
+  microk8s kubectl config view --raw >~/.kube/config
+  ```
+</details>
+
+### Helm
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
-**Using a Package Manager:**
+Choose one of the below section to install helm. For further information please visit https://helm.sh/docs/intro/install/
+#### Using a Package Manager:
 
-* macOS with Homebrew: `brew install helm`
-* Linux with Snap: `sudo snap install helm --classic`
-* Windows with Chocolatey: `choco install kubernetes-helm`
+- macOS with Homebrew: `brew install helm`
+- Linux with Snap: `sudo snap install helm --classic`
+- Windows with Chocolatey: `choco install kubernetes-helm`
 
-**Using a Script:**
+#### Using microk8s:
+
+```sh
+$ microk8s.enable helm3
+```
+
+#### Using a Script:
 
 ```sh
 $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
@@ -122,7 +213,7 @@ $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 ```
 
-#### Downloading the application
+## Downloading the application
 
 Make sure you clone down the application repo and you are in the correct directory.
 
@@ -130,7 +221,6 @@ Make sure you clone down the application repo and you are in the correct directo
 $ git clone https://github.com/nodeshift/mern-workshop.git
 $ cd mern-workshop
 ```
-
 
 ### 1. Create your Helm Chart files
 
@@ -154,12 +244,11 @@ myapp/
     └── tests/    # The test files
 ```
 
-
 These files will form the basis of your Helm Chart, lets explore the pre-created files and make some necessary changes.
 
 ### 2. Editing the .helmignore file
 
-   This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example, if you have some secrets saved as a JSON file that you do not want to be inside the helm chart. For our application we do not have any files we need to protect so let's move on to the next step.
+This file works the same as any .ignore file, you just fill in the patterns you don't want to be packaged up into the helm chart. For example, if you have some secrets saved as a JSON file that you do not want to be inside the helm chart. For our application we do not have any files we need to protect so let's move on to the next step.
 
 ### 3. The Chart.yaml file
 
@@ -180,11 +269,11 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
 
    `appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version 
 
-   The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
+The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
 
    ```yaml
    kubeVersion: '>= 1.21.0-0'
-   keywords:   
+   keywords:
    - nodejs
    - express
    - mern
@@ -193,7 +282,7 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
      email: FirstnameLastname@company.com
    ```
 
-   The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
+The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
 
    ```yaml
    dependencies:
@@ -205,7 +294,9 @@ These files will form the basis of your Helm Chart, lets explore the pre-created
    Then run the following command in the terminal to download the chart:
    
    ```sh
+   cd myapp
    helm dependency update
+   cd ..
    ```
 
 ### 4. Template files
@@ -296,8 +387,7 @@ What this creates is our frontend deployment, inside that is the pod that is run
 
 We also add the `frontend-selector` label to our pod which allows for our frontend service to connect with it.
 
-
-#### 4.3 Backend Service 
+#### 4.3 Backend Service
 
 Our third file will spawn the service for the backend part of our application. Create a file called `chart/myapp/templates/backend-service.yaml` and paste in the following:
 
@@ -392,6 +482,8 @@ frontend:
 ```
 These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
+In case of microk8s replace  `repository: frontend` with `repository: localhost:32000/frontend`
+
 ```yaml
 # backend
 backend:
@@ -414,21 +506,26 @@ backend:
     servicePort: 30555
   services:
     mongo:
-      url: mongo-mongodb
+      url: myapp-mongodb
       name: todos
       env: production
 ```
 
 These values are for the backend section. Here we pass through the image, tag, service information, and some mongoDB information to locate the instance.
 
+In case of microk8s replace  `repository: backend` with `repository: localhost:32000/backend`
+
 ```yaml
 # mongo
 mongodb:
   auth:
     enabled: false
-  replicaSet.enabled: true
-  service.type: LoadBalancer
-  replicaSet.replicas.secondary: 3
+  replicaSet:
+    enabled: true
+    replicas:
+      secondary: 3
+  service:
+    type: LoadBalancer
 
 ```
 
@@ -441,6 +538,15 @@ First we need to build our docker images to deploy, from the root directory of t
 ```sh
 $ docker build -f frontend/Dockerfile -t frontend:v1.0.0 frontend
 $ docker build -f backend/Dockerfile -t backend:v1.0.0 backend
+```
+or if you are using microk8s
+
+```sh
+$ docker build -f frontend/Dockerfile -t localhost:32000/frontend:v1.0.0 frontend
+$ docker build -f backend/Dockerfile -t localhost:32000/backend:v1.0.0 backend
+
+$ docker push localhost:32000/backend:v1.0.0
+$ docker push localhost:32000/frontend:v1.0.0
 ```
 
 Once the images are built you can now deploy your helm chart
@@ -464,11 +570,50 @@ frontend-deployment-6c7779ff9d-xjdrv   1/1     Running   0          67s
 myapp-mongodb-64df664c5b-st8fb         1/1     Running   0          66s
 ```
 
-You can access your application at `http://localhost:30444/`
+Wait for some time until mongo status is running
+
+Also, by viewing the logs of the backend service with below command
+
+```sh
+kubectl logs backend-deployment-xxxxxxxx-xxxxx -f
+```
+you should get below message
+
+`Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
+
+
+No you can access your application at `http://localhost:30444/`
 
 ### Congratulations! 🎉
 
 You have now created a Helm Chart which deploys a frontend and a backend whilst also calling and installing a dependency chart from the internet.
+
+### Interacting with the application
+
+By visiting `http://localhost:30444/` you should be able to see the UI as shown on the image below
+
+![Application ui](/helm/images/frontend-initial-ui.png)
+
+Lets add an item by filling the textbox and clicking on the `Add new toDo` button
+
+![Adding item](/helm/images/frontend-add-item.png)
+
+By clicking the `Add new ToDo` button, the item should be added on the list as shown on image below.
+
+You should also be able to see below message on the backend service
+
+`Creating Todo for NodeConfEU Clean the bicycle`
+
+by viewing the logs with below command 
+```sh
+kubectl logs backend-deployment-xxxxxxxx-xxxxx -f
+```
+
+![Added item](/helm/images/frontend-added-item.png)
+
+Click the x button next to the todo item and it should be removed
+
+### Uninstalling the App
 
 Once you are finished you can uninstall the chart by running:
 
