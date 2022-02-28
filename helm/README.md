@@ -594,14 +594,20 @@ By visiting `http://localhost:30444/` you should be able to see the UI as shown 
 
 ![Application ui](/helm/images/frontend-initial-ui.png)
 
-Lets add an item by filling the textbox and clicking on the `add new toDo` button
+Lets add an item by filling the textbox and clicking on the `Add new toDo` button
 
 ![Adding item](/helm/images/frontend-add-item.png)
 
-After clicking the `Add new ToDo` button, the item should be added on the list.
-You should also be able to see below message on the backend service logs.
+By clicking the `Add new ToDo` button, the item should be added on the list as shown on image below.
+
+You should also be able to see below message on the backend service
 
 `Creating Todo for NodeConfEU Clean the bicycle`
+
+by viewing the logs with below command 
+```sh
+kubectl logs backend-deployment-xxxxxxxx-xxxxx -f
+```
 
 ![Added item](/helm/images/frontend-added-item.png)
 
