@@ -49,9 +49,10 @@ Add the user to the docker group (optional for part 1, required for part 2 and 3
 
 ```sh
 sudo groupadd docker
-sudo gpasswd -a $USER docker
-sudo service docker restart
+sudo usermod -aG docker $USER
 ```
+
+Log out and log back in so that your group membership is re-evaluated.
 
 </details>
 
