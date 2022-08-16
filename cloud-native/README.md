@@ -23,78 +23,97 @@ In this self-paced tutorial you will:
 
 The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Podman, Kubernetes, Prometheus, Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
-The content of this tutorial is based on recommendations from the  [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
+The content of this tutorial is based on recommendations from the [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
 
-### Prerequisites
+## Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Install [Podman](https://podman.io/getting-started/installation)
-1. Install [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/) or [microk8s](https://microk8s.io/#quick-start)
-1. Install [Helm v3](https://helm.sh/docs/intro/install/)
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Podman v4 (and above)
+   - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
+   - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
+   - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
+1. Podman Desktop
+   - **On Mac**: [Podman Desktop](hhttps://podman-desktop.io/docs/Installation/macos-install#3-install-podman-desktop-application-for-macos)
+   - **On Windows**: [Podman Desktop](https://podman-desktop.io/docs/Installation/windows-install)
+   - **On Linux**: [Podman Desktop](https://podman-desktop.io/docs/Installation/linux-install)
+1. Kubernetes
+   - **On Mac**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Windows**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Linux**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+1. Helm v3 - https://helm.sh/docs/intro/install/
    - **Note**: This workshop tested with Helm v3.5.4
 
-### Setting up
+## Setting up
 
-How to start Kubernetes will depend on how you intend to run it.
+### Starting Podman Machine
 
-#### Starting Kubernetes
+**_Mac/Linux_**: After installing podman, create and start your Podman machine:
 
-#### `microk8s`
-
-<details>
-
-```sh
-snap install --channel 1.14/stable microk8s --classic
-sudo usermod -a -G microk8s ibmuser
-sudo microk8s.start
-sudo snap alias microk8s.kubectl kubectl
-export PATH=/snap/bin:$PATH
-sudo microk8s.config >~/.kube/config
-microk8s.enable dns registry
+```
+podman machine init
+podman machine start
 ```
 
-You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
+### Starting Kubernetes
 
-**Note**: The Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to install 1.14.
+#### On macOS: //TODO
 
-</details>
+1. Select the Docker icon in the Menu Bar
+2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
 
-#### `minikube`
+#### On Windows: //TODO
 
-<details>
+1. Select the Docker icon in the notification area of the taskbar.
+2. Click `Settings > Kubernetes > Enable Kubernetes`.
 
-```sh
-minikube config set rootless true
-minikube start --kubernetes-version=1.24.1 --driver=podman --container-runtime=cri-o
-eval $(minikube podman-env)
+It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+
+1. Select the Docker icon in the Menu Bar
+2. Click `Kubernetes` and select the `docker-for-desktop` context
+
+#### On linux
+
+1. Change minikube for starting podman rootless
+   https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
+
+   ```
+   minikube config set rootless true
+   ```
+
+1. start minikube
+   ```
+   minikube start --kubernetes-version=1.24.1 --driver=podman --container-runtime=containerd
+   ```
+
+<!-- ```sh
+minikube start --kubernetes-version=1.14.7
+eval $(minikube docker-env)
 ```
 
 **Note** that the Prometheus Helm chart is
 [not compatible](https://github.com/helm/charts/pull/17268) with
 Kubernetes 1.16, so make sure to run with 1.14.7.
-</details>
+ -->
 
-#### Installing Helm
+### Installing Helm
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
 **Using a Package Manager:**
 
-* macOS with Homebrew: `brew install helm`
-* Linux with Snap: `sudo snap install helm --classic`
-* Windows with Chocolatey: `choco install kubernetes-helm`
+- macOS with Homebrew: `brew install helm`
+- Linux with Snap: `sudo snap install helm --classic`
+- Linux using a script:
 
-**Using a Script:**
+  ```sh
+  $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+  $  chmod 700 get_helm.sh
+  $ DESIRED_VERSION=v3.9.3 ./get_helm.sh
+  ```
 
-```sh
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ chmod 700 get_helm.sh
-$ ./get_helm.sh
-```
+- Windows with Chocolatey: `choco install kubernetes-helm`
 
 ### 1. Create your Express.js Application
 
@@ -338,9 +357,8 @@ The provided Helm chart provides a number of configuration files, with the confi
 Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
-2. Change the `repository` field to `nodeserver`
-3. Ensure that the `pullPolicy` is set to `IfNotPresent`
-4. Change the `replicaCount` value to `3` (Line 3)
+1. Ensure that the `pullPolicy` is set to `IfNotPresent`
+1. Change the `replicaCount` value to `3` (Line 3)
 
 The `repository` field gives the name of the Docker image to use. The `pullPolicy` change tells Kubernetes to use a local container image if there is one available rather than always pulling the container image from a remote repository. Finally, the `replicaCount` states how many instances to deploy.
 
@@ -364,30 +382,30 @@ $ minikube addons enable registry
 ```
 We can now build the image directly using `minikube image build`:
 ```console
-$ minikube image build -t $(minikube ip):5000/nodeserver:1.0.0 --file Dockerfile-run .
+$ minikube image build -t $(minikube ip):42631/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 And we can list the images in minikube:
 ```console
 $ minikube image ls
 ...
-192.168.58.2:5000/nodeserver:1.0.0
+192.168.58.2:42631/nodeserver:1.0.0
 ...
 ```
 Next, we push the image into the registry using:
 ```console
-$ minikube image push $(minikube ip):5000/nodeserver
+$ minikube image push $(minikube ip):42631/nodeserver
 ```
 
 Finally, we can install the Helm chart using:
 ```sh
 helm install nodeserver \
-  --set image.repository=$(minikube ip):5000/nodeserver  chart/nodeserver
+  --set image.repository=$(minikube ip):42631/nodeserver  chart/nodeserver
 ```
 
 2. Check that all the "pods" associated with your application are running:
 
    ```sh
-   kubectl get pods
+   minikube kubectl -- get pods
    ```
 
 In earlier steps, we set the `replicaCount` to `3`, so you should expect to see three `nodeserver-deployment-*` pods running.
@@ -399,7 +417,7 @@ Kubernetes has a concept of a 'Service', which is an abstract way to expose an a
 3. You can forward the `nodeserver-service` to your device by:
 
   ```sh
-  kubectl port-forward service/nodeserver-service 3000
+  minikube kubectl -- port-forward service/nodeserver-service 3000
   ```
 
 You can now access the application endpoints from your browser.
@@ -409,8 +427,8 @@ You can now access the application endpoints from your browser.
 Installing Prometheus into Kubernetes can be done using its provided Helm chart. This step needs to be done in a new Terminal window as you'll need to keep the application port-forwarded to `localhost:3000`.
 
   ```sh
-  kubectl create namespace prometheus
-  kubectl config set-context --current --namespace=prometheus
+  minikube kubectl -- create namespace prometheus
+  minikube kubectl -- config set-context --current --namespace=prometheus
   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   helm install prometheus prometheus-community/prometheus --namespace=prometheus
   ```
@@ -419,19 +437,19 @@ You can then run the following two commands in order to be able to connect to Pr
 
   On Linux and macOS:
   ```sh
-  export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace prometheus port-forward $POD_NAME 9090
+  export POD_NAME=$(minikube kubectl -- get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace prometheus port-forward $POD_NAME 9090
   ```
 
   On Windows:
   ```
-  for /f "tokens=*" %i in ('"kubectl get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
-  kubectl --namespace prometheus port-forward %POD_NAME% 9090
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  minikube kubectl -- --namespace prometheus port-forward %POD_NAME% 9090
   ```
 
 This may fail with a warning about status being "Pending" until Prometheus has started, retry once the status is "Running" for all pods:
   ```sh
-  kubectl -n prometheus get pods --watch
+  minikube kubectl -- -n prometheus get pods --watch
   ```
 
 You can now connect to Prometheus at [http://localhost:9090](http://localhost:9090).
@@ -448,31 +466,6 @@ This will show a graph mapping the `nodejs_heap_size_used_bytes` across each of 
 
 ![Prometheus Graph](./images/prom_graph2.png)
 
-<details>
-<summary>microk8s only</summary>
-
-If you encounter a problem where there are no nodejs metrics in the **Expression** box, your Prometheus deployment may not be scraping metrics from the nodeserver. To check your microk8s cluster is setup ok run the following command:
-
-```sh
-microk8s.inspect
-```
-
-You may see the following warning
-
-```sh
-WARNING:  IPtables FORWARD policy is DROP. Consider enabling traffic forwarding with: sudo iptables -P FORWARD ACCEPT
-The change can be made persistent with: sudo apt-get install iptables-persistent
-```
-
-To fix this warning run the following command which will ensure packets sent to/from your pods can be forwarded. This change is also non-persistent.
-
-```sh
-sudo iptables -P FORWARD ACCEPT
-```
-
-More microk8s troubleshooting information can be found here: https://microk8s.io/docs/troubleshooting
-
-</details>
 
 Whilst Prometheus provides the ability to build simple graphs and alerts, Grafana is commonly used to build more sophisticated dashboards.
 
@@ -483,8 +476,8 @@ Installing Grafana into Kubernetes can be done using its provided Helm chart.
 In a third Terminal window:
 
 ```sh
-kubectl create namespace grafana
-kubectl config set-context --current --namespace=grafana
+minikube kubectl -- create namespace grafana
+minikube kubectl -- config set-context --current --namespace=grafana
 helm repo add grafana https://grafana.github.io/helm-charts
 helm install grafana grafana/grafana --set adminPassword=PASSWORD --namespace=grafana
 ```
@@ -493,8 +486,8 @@ You can then run the following two commands in order to be able to connect to Gr
 
   On Linux and macOS:
   ```sh
-  export POD_NAME=$(kubectl get pods --namespace grafana -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace grafana port-forward $POD_NAME 3001:3000
+  export POD_NAME=$(minikube kubectl -- get pods --namespace grafana -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace grafana port-forward $POD_NAME 3001:3000
   ```
 
   On Windows:
