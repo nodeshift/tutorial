@@ -29,7 +29,7 @@ The content of this tutorial is based on recommendations from the [NodeShift Ref
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
 1. Podman v4 (and above)
    - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
    - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
@@ -42,19 +42,33 @@ Before getting started, make sure you have the following prerequisites installed
    - **On Mac**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
    - **On Windows**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
    - **On Linux**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.5.4
+1. Helm v3 - [Installation](./README.md#installing-helm-v37)
+   - **Note**: This workshop tested with Helm v3.7
 
 ## Setting up
 
 ### Starting Podman Machine
 
-**_Mac/Linux_**: After installing podman, create and start your Podman machine:
+#### On Mac/Linux:
+
+After installing podman, create and start your Podman machine:
 
 ```
 podman machine init
 podman machine start
 ```
+
+#### On Windows
+
+After downloading and starting Podman Desktop, click on install button in the home page of Podman Desktop to install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop. You might need to reboot your system several times.
+
+After a complete podman installation, set WSL2 as default WSL by entering this command in an administrator PowerShell.
+
+```
+wsl --set-default-version 2
+```
+
+Start Podman Desktop -> Home tab -> click on the toggle button to initialize Podman, wait until the initialization is done and then click on the toggle button to Run Podman.
 
 ### Starting Kubernetes
 
@@ -63,15 +77,22 @@ podman machine start
 1. Select the Docker icon in the Menu Bar
 2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
 
-#### On Windows: //TODO
+#### On Windows:
 
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
+Using [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup#install-with-powershell.exe) Package Manager
 
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+1. Install minikube with Chocolatey Package manager by using this command in PowerShell
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
+   ```
+   choco install minikube
+   ```
+
+2. Start minikube
+
+   ```
+   minikube start -p aged --kubernetes-version=v1.24.1
+
+   ```
 
 #### On linux
 
@@ -84,7 +105,8 @@ It will take a few moments to install and start up. If you already use Kubernete
 
 1. start minikube
    ```
-   minikube start --kubernetes-version=1.24.1 --driver=podman --container-runtime=containerd
+   minikube start --kubernetes-version=1.24.1 --driver=podman --container-runtime=cri-o
+   eval $(minikube podman-env)
    ```
 
 <!-- ```sh
@@ -97,23 +119,32 @@ eval $(minikube docker-env)
 Kubernetes 1.16, so make sure to run with 1.14.7.
  -->
 
-### Installing Helm
+### Installing Helm v3.7
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
 
 **Using a Package Manager:**
 
-- macOS with Homebrew: `brew install helm`
-- Linux with Snap: `sudo snap install helm --classic`
+- macOS with Homebrew:
+  https://helm.sh/docs/intro/install/#from-homebrew-macos
+  ```
+   brew install helm
+  ```
+- Linux with Snap:
+
+  ```
+  sudo snap install --channel=3.7 helm --classic
+  ```
+
 - Linux using a script:
 
   ```sh
   $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
   $  chmod 700 get_helm.sh
-  $ DESIRED_VERSION=v3.9.3 ./get_helm.sh
+  $ DESIRED_VERSION=v3.7 ./get_helm.sh
   ```
 
-- Windows with Chocolatey: `choco install kubernetes-helm`
+- Windows with Chocolatey: `choco install kubernetes-helm --version=3.7`
 
 ### 1. Create your Express.js Application
 
