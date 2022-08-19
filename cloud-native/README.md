@@ -91,6 +91,7 @@ Using [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup#install-with-po
 
    ```
    minikube start -p aged --kubernetes-version=v1.24.1
+   minikube start
 
    ```
 
@@ -157,20 +158,20 @@ The following steps cover creating a base Express.js application. Express.js is 
    cd nodeserver
    ```
 
-2. Initialize your project with `npm` and install the Express.js module: 
+1. Initialize your project with `npm` and install the Express.js module:
 
    ```sh
    npm init --yes
    npm install express
    ```
 
-3. We'll also install the Helmet module. Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
+1. We'll also install the Helmet module. Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
 
    ```sh
    npm install helmet
    ```
 
-4. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. The [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) recommends using Pino, a JSON-based logger.
+1. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. The [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) recommends using Pino, a JSON-based logger.
 
    Install Pino:
 
@@ -178,13 +179,9 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install pino
    ```
 
-5. Now, let's start creating our server. Create a file named `server.js`:
+1. Now, let's start creating our server. Create a file named `server.js`
 
-   ```sh
-   touch server.js
-   ```
-
-6. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'. 
+1. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'.
 
    ```js
    const express = require('express');
@@ -205,7 +202,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    });
    ```
 
-4. Start your application:
+1. Start your application:
 
     ```sh
     npm start
