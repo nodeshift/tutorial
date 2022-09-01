@@ -117,9 +117,10 @@ podman system connection default podman-machine-default-root
 
 1. start minikube
    ```
-   minikube start --driver=podman --container-runtime=cri-o
-   eval $(minikube podman-env)
+   minikube start  --driver=podman --container-runtime=containerd
    ```
+2. Possible additional steps needed
+   * delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/)
 
 ### Installing Helm v3.7
 
