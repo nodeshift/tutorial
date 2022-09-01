@@ -51,7 +51,7 @@ Before getting started, make sure you have the following prerequisites installed
 
 #### On Mac/Linux:
 
-After installing podman, create and start your Podman machine:
+After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
 ```
 podman machine init
@@ -60,15 +60,16 @@ podman machine start
 
 #### On Windows
 
-After downloading and starting Podman Desktop, click on install button in the home page of Podman Desktop to install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop. You might need to reboot your system several times.
+1. Launch Podman Desktop and on the home tab click on install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
 
-After a complete podman installation, set WSL2 as default WSL by entering this command in an administrator PowerShell.
+1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
 
-```
-wsl --set-default-version 2
-```
+   ```
+   wsl --set-default-version 2
+   ```
 
-Start Podman Desktop -> Home tab -> click on the toggle button to initialize Podman, wait until the initialization is done and then click on the toggle button to Run Podman.
+1. On Podman Desktop Home tab -> click on **initialize Podman** -> wait till the initialization is finished
+1. On Podman Desktop Home tab -> click on **Run Podman** to run podman.
 
 ### Starting Kubernetes
 
