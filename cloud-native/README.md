@@ -80,20 +80,23 @@ podman machine start
 
 #### On Windows:
 
-Using [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup#install-with-powershell.exe) Package Manager
-
-1. Install minikube with Chocolatey Package manager by using this command in PowerShell
-
+1. Download minikube v1.26.1
    ```
-   choco install minikube
+   https://github.com/kubernetes/minikube/releases/download/v1.26.1/minikube-windows-amd64.exe
    ```
+1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
+1. Move minikube under `C:\Program Files\minikube` directory
 
-2. Start minikube
+1. Add `minikube.exe` binary to your `PATH system variable`
 
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
+   1. Restart your computer for the changes to take effect.
+
+1. Start minikube by opening Powershell or Command Prompt and entering below command.
    ```
-   minikube start -p aged --kubernetes-version=v1.24.1
    minikube start
-
    ```
 
 #### On linux
@@ -107,19 +110,9 @@ Using [Chocolatey](https://docs.chocolatey.org/en-us/choco/setup#install-with-po
 
 1. start minikube
    ```
-   minikube start --kubernetes-version=1.24.1 --driver=podman --container-runtime=cri-o
+   minikube start --kubernetes-version=1.26.1 --driver=podman --container-runtime=cri-o
    eval $(minikube podman-env)
    ```
-
-<!-- ```sh
-minikube start --kubernetes-version=1.14.7
-eval $(minikube docker-env)
-```
-
-**Note** that the Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to run with 1.14.7.
- -->
 
 ### Installing Helm v3.7
 
