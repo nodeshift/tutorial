@@ -16,131 +16,136 @@ In this self-paced tutorial you will:
 
 - Create an Express.js application
 - Add logging, metrics, and health checks
-- Build your application with Docker
+- Build your application with Podman
 - Package your application with Helm
 - Deploy your application to Kubernetes
 - Monitor your application using Prometheus
 
-The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Docker, Kubernetes, Prometheus, Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
+The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Podman, Kubernetes, Prometheus, Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
-The content of this tutorial is based on recommendations from the  [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
+The content of this tutorial is based on recommendations from the [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
 
-### Prerequisites
+## Prerequisites
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Docker and Kubernetes
-   - ***On Mac or Windows***: [Docker for Desktop](https://www.docker.com/products/docker-desktop)
-   - ***On Linux***: Docker for Desktop is not available, follow the docker for linux instructions below and Kubernetes alternatives are:
-    - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-    - [microk8s](https://microk8s.io/#quick-start)
-1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.5.4
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Podman v4 (and above)
+   - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
+   - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
+   - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
+1. Podman Desktop
+   - **On Mac**: [Podman Desktop](hhttps://podman-desktop.io/docs/Installation/macos-install#3-install-podman-desktop-application-for-macos)
+   - **On Windows**: [Podman Desktop](https://podman-desktop.io/docs/Installation/windows-install)
+   - **On Linux**: [Podman Desktop](https://podman-desktop.io/docs/Installation/linux-install)
+1. Kubernetes
+   - **On Mac**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Windows**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Linux**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+1. Helm v3 - [Installation](./README.md#installing-helm-v37)
+   - **Note**: This workshop tested with Helm v3.7
 
-### Setting up
+## Setting up
 
-How to start Kubernetes will depend on how you intend to run it.
+### Starting Podman Machine
 
-#### Starting Kubernetes
+#### On Mac/Linux:
 
-#### `Docker for Desktop`
+After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
-Ensure you have installed Docker for Desktop and enabled Kubernetes within the application. To do so:
+```
+podman machine init
+podman machine start
+```
 
-On macOS:
+#### On Windows
+
+1. Launch Podman Desktop and on the home tab click on install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
+
+1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
+
+   ```
+   wsl --set-default-version 2
+   ```
+
+1. On Podman Desktop Home tab -> click on **initialize Podman** -> wait till the initialization is finished
+1. On Podman Desktop Home tab -> click on **Run Podman** to run podman.
+
+### Starting Kubernetes
+
+#### On macOS: //TODO
+
 1. Select the Docker icon in the Menu Bar
 2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
 
-On Windows:
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
+#### On Windows:
 
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+1. Download minikube v1.26.1
+   ```
+   https://github.com/kubernetes/minikube/releases/download/v1.26.1/minikube-windows-amd64.exe
+   ```
+1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
+1. Move minikube under `C:\Program Files\minikube` directory
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
+1. Add `minikube.exe` binary to your `PATH system variable`
 
-#### Docker on linux
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
+   1. Restart your computer for the changes to take effect.
 
-<details>
-Install Docker Engine Community using
+1. Start minikube by opening Powershell or Command Prompt and entering below command.
+   ```
+   minikube start
+   ```
 
-```sh
-sudo apt-get install docker-ce docker-ce-cli containerd.io
-```
+#### On linux
 
-More information can be found at https://docs.docker.com/install/linux/docker-ce/ubuntu/
+1. Change minikube for starting podman rootless
+   https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
 
-Add the user to the docker group (optional for part 1, required for part 2 and 3)
+   ```
+   minikube config set rootless true
+   ```
 
-```sh
-sudo groupadd docker
-sudo gpasswd -a $USER docker
-sudo service docker restart
-```
+1. start minikube
+   ```
+   minikube start --kubernetes-version=1.26.1 --driver=podman --container-runtime=cri-o
+   eval $(minikube podman-env)
+   ```
 
-Install docker compose
+### Installing Helm v3.7
 
-```sh
-sudo apt install docker-compose
-```
+Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm by downloading the binary file and adding it to your PATH:
 
-</details>
+1. Download the binary file from the section **Installation and Upgrading** for Operating system accordingly.
 
-#### `microk8s`
+   - https://github.com/helm/helm/releases/tag/v3.7.2
 
-<details>
+1. Extract it:
 
-```sh
-snap install --channel 1.14/stable microk8s --classic
-sudo usermod -a -G microk8s ibmuser
-sudo microk8s.start
-sudo snap alias microk8s.kubectl kubectl
-export PATH=/snap/bin:$PATH
-sudo microk8s.config >~/.kube/config
-microk8s.enable dns registry
-```
+   - On Linux: `tar -zxvf helm-v3.7.2-*`
+   - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
+   - On Mac: //TODO
 
-You may be prompted to add your userid to the 'microk8s' group to avoid having to use `sudo` for all the commands.
+1. Add helm binary file to your `PATH system variable`
+   On Linux:
 
-**Note**: The Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to install 1.14.
+   ```
+   cp `./<your-linux-distro>/helm` /usr/local/bin/
+   rm -rf ./<your-linux-distro>
+   ```
 
-</details>
+   On Windows:
 
-#### `minikube`
+   1. Move helm binary file to `C:\Program Files\helm`
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
+   1. Restart your computer for the changes to take effect.
 
-<details>
-
-```sh
-minikube start --kubernetes-version=1.14.7
-eval $(minikube docker-env)
-```
-
-**Note** that the Prometheus Helm chart is
-[not compatible](https://github.com/helm/charts/pull/17268) with
-Kubernetes 1.16, so make sure to run with 1.14.7.
-</details>
-
-#### Installing Helm
-
-Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
-
-**Using a Package Manager:**
-
-* macOS with Homebrew: `brew install helm`
-* Linux with Snap: `sudo snap install helm --classic`
-* Windows with Chocolatey: `choco install kubernetes-helm`
-
-**Using a Script:**
-
-```sh
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ chmod 700 get_helm.sh
-$ ./get_helm.sh
-```
+   On Mac:
+   //TODO
 
 ### 1. Create your Express.js Application
 
@@ -153,20 +158,20 @@ The following steps cover creating a base Express.js application. Express.js is 
    cd nodeserver
    ```
 
-2. Initialize your project with `npm` and install the Express.js module: 
+1. Initialize your project with `npm` and install the Express.js module:
 
    ```sh
    npm init --yes
    npm install express
    ```
 
-3. We'll also install the Helmet module. Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
+1. We'll also install the Helmet module. Helmet is a middleware that we can use to set some sensible default headers on our HTTP requests.
 
    ```sh
    npm install helmet
    ```
 
-4. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. The [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) recommends using Pino, a JSON-based logger.
+1. It is important to add effective logging to your Node.js applications to facilitate observability, that is to help you understand what is happening in your application. The [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture/blob/main/docs/operations/logging.md) recommends using Pino, a JSON-based logger.
 
    Install Pino:
 
@@ -174,13 +179,9 @@ The following steps cover creating a base Express.js application. Express.js is 
    npm install pino
    ```
 
-5. Now, let's start creating our server. Create a file named `server.js`:
+1. Now, let's start creating our server. Create a file named `server.js`
 
-   ```sh
-   touch server.js
-   ```
-
-6. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'. 
+1. Add the following to `server.js` to produce an Express.js server that responds on the `/` route with 'Hello, World!'.
 
    ```js
    const express = require('express');
@@ -201,7 +202,7 @@ The following steps cover creating a base Express.js application. Express.js is 
    });
    ```
 
-4. Start your application:
+1. Start your application:
 
     ```sh
     npm start
@@ -300,16 +301,17 @@ For information on how to configure the `prom-client` library see the [prom-clie
 
 You can install a local Prometheus server to graph and visualize the data, and additionally to set up alerts. For this workshop, you'll use Prometheus once you've deployed your application to Kubernetes.
 
-### 4. Building your Application with Docker
+### 4. Building your Application with Podman
 
-Before you can deploy your application to Kubernetes, you first need to build your application into a Docker container and produce a Docker image. This packages your application along with all of its dependencies in a ready-to-run format.
+Before you can deploy your application to Kubernetes, you first need to build your application into a container and produce a container image. This packages your application along with all of its dependencies in a ready-to-run format.
 
-NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of Dockerfile templates that can be used to build your Docker container and produce your image.
+NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of Dockerfile templates that can be used to build your container and produce your image. The same file format can be used with Podman.
 
 For this workshop, you'll use the `Dockerfile-run` template, which builds a production-ready Docker image for your application.
 
 Build a production Docker image for your Express.js application using the following steps:
 
+#### On Mac/Linux
 1. Copy the `Dockerfile-run` template into the root of your project:
 
    ```sh
@@ -325,28 +327,63 @@ Build a production Docker image for your Express.js application using the follow
 3. Build the Docker run image for your application:
 
    ```sh
-   docker build --tag nodeserver:1.0.0 --file Dockerfile-run .
+   podman build --tag nodeserver:1.0.0 --file Dockerfile-run .
    ```
 
-You have now built a Docker image for your application called `nodeserver` with a version of `1.0.0`. Use the following to run your application inside the Docker container:
+You have now built a container image for your application called `nodeserver` with a version of `1.0.0`. Use the following to run your application inside the container:
 
   ```sh
-  docker run --interactive --publish 3000:3000 --tty nodeserver:1.0.0
+  podman run --interactive --publish 3000:3000 --tty nodeserver:1.0.0
   ```
 
-This runs your Docker image in a Docker container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
+This runs your container image in a Podman container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
 
-<details>
-<summary>minikube only</summary>
+#### On Windows
 
-Docker runs in the minikube VM, so you'll need to access the application via the minikube IP address.
+We will use Podman Desktop to build and run our image.
+1. Create a file called `Dockerfile-run` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
 
-```sh
-open http://$(minikube ip):3000/
-```
+1. Create another file called `.dockerignore` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
 
-</details>
+1. Run Podman Desktop
 
+1. On Podman Desktop Click on Images (tab - left sidebar) -> Build Image
+
+   <details>
+   <summary>Available images (click to expand)</summary>
+
+   ![Available images](./images/podman_desktop_images.png)
+   </details>
+
+1. Set the containerfile path which in our case points to the Dockerfile-run and the image name `nodeserver` -> Build
+
+   <details>
+   <summary>Start building image (click to expand)</summary>
+
+   ![Build Image](./images/build_image_nodeserver.png)
+   </details>
+
+   <details>
+   <summary>Image build process (click to expand)</summary>
+
+   ![build process](./images/podman_build_image.png)
+   </details>
+
+1. After build process, on Images tab the nodeserver Image should be visible.
+
+   <details>
+   <summary>Final build image (click to expand)</summary>
+
+   ![nodeserver Image](./images/nodeserver_image.png)
+   </details>
+
+1. Hover over the container image -> click on the play button to run the image -> set ports 3000 and 8080 -> start container
+
+   <details>
+   <summary>Run image on port 3000 (click to expand)</summary>
+
+   ![nodeserver container](./images/run_nodeserver_container.png)
+   </details>
 Visit your applications endpoints to check that it is running successfully:
 
 * Homepage: [http://localhost:3000/](http://localhost:3000/)
@@ -355,7 +392,7 @@ Visit your applications endpoints to check that it is running successfully:
 
 ## 5. Packaging your Application with Helm
 
-In order to deploy your Docker image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which Docker image to use, how many replicas (instances) to deploy, and how much memory and CPU to provide to each.
+In order to deploy your container image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which container image to use, how many replicas (instances) to deploy, and how much memory and CPU to provide to each.
 
 Helm charts provide an easy way to package your application with this information.
 
@@ -365,29 +402,41 @@ Add a Helm chart for your Express.js application using the following steps:
 
 1. Download the template Helm chart:
 
+   On Linux and macOS:
+
    ```sh
    curl -fsSL -o main.tar.gz https://github.com/NodeShift/helm/archive/main.tar.gz
    ```
 
+   On Windows:
+
+   Download: https://github.com/NodeShift/helm/archive/main.zip
+
 2. Untar the downloaded template chart:
+
+   On Linux and macOS:
 
    ```sh
    tar xfz main.tar.gz
    ```
+   On Windows:
+      * Right Click on `helm-main.zip` -> Extract All... -> Select the nodeserver directory -> Extract 
 
 3. Move the chart to your projects root directory:
 
    On Linux and macOS:
+
    ```sh
    mv helm-main/chart chart
    rm -rf helm-main main.tar.gz
    ```
 
-   On Windows:
+   On Windows (Command Prompt):
+
    ```
    move helm-main\chart chart
    rmdir /s /q helm-main
-   del main.tar.gz
+   del main.zip
    ```
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
@@ -395,11 +444,10 @@ The provided Helm chart provides a number of configuration files, with the confi
 Go ahead and modify the `chart/nodeserver/values.yaml` file to use your image, and to deploy 3 replicas:
 
 1. Open the `chart/nodeserver/values.yaml` file
-2. Change the `repository` field to `nodeserver`
-3. Ensure that the `pullPolicy` is set to `IfNotPresent`
-4. Change the `replicaCount` value to `3` (Line 3)
+1. Ensure that the `pullPolicy` is set to `IfNotPresent`
+1. Change the `replicaCount` value to `3` (Line 3)
 
-The `repository` field gives the name of the Docker image to use. The `pullPolicy` change tells Kubernetes to use a local Docker image if there is one available rather than always pulling the Docker image from a remote repository. Finally, the `replicaCount` states how many instances to deploy.
+The `repository` field gives the name of the Docker image to use. The `pullPolicy` change tells Kubernetes to use a local container image if there is one available rather than always pulling the container image from a remote repository. Finally, the `replicaCount` states how many instances to deploy.
 
 ## 6. Deploying your Application to Kubernetes
 
@@ -407,36 +455,44 @@ Now that you have built a Helm chart for your application, the process for deplo
 
 Deploy your Express.js application into Kubernetes using the following steps:
 
-<details>
-<summary>microk8s only</summary>
+1. Create a local image registry  
+You will need to push the image into the kubernetes container registry so that
+minikube/microk8s can access it.
 
-You will need to push the image into the kubernetes container registry so that microk8s can access it.
-
-```sh
-docker tag nodeserver:1.0.0 localhost:32000/nodeserver:1.0.0
-docker push localhost:32000/nodeserver:1.0.0
-helm install nodeserver \
-  --set image.repository=localhost:32000/nodeserver  chart/nodeserver
+First we enable the image registry addon for minikube:
+```console
+$ minikube addons enable registry
+    ▪ Using image registry:2.7.1
+    ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
+🔎  Verifying registry addon...
+🌟  The 'registry' addon is enabled
 ```
-</details>
+We can now build the image directly using `minikube image build`:
+```console
+$ minikube image build -t $(minikube ip):42631/nodeserver:1.0.0 --file Dockerfile-run .
+```
+And we can list the images in minikube:
+```console
+$ minikube image ls
+...
+192.168.58.2:42631/nodeserver:1.0.0
+...
+```
+Next, we push the image into the registry using:
+```console
+$ minikube image push $(minikube ip):42631/nodeserver
+```
 
-1. Deploy your application into Kubernetes:
-
-   ```sh
-   helm install nodeserver chart/nodeserver
-   ```
-
-**Note**: If an error is encountered because the previous `docker run` is still running, delete and retry the helm install:
-
-   ```sh
-   helm del --purge nodeserver
-   helm install nodeserver chart/nodeserver
-   ```
+Finally, we can install the Helm chart using:
+```sh
+helm install nodeserver \
+  --set image.repository=$(minikube ip):42631/nodeserver  chart/nodeserver
+```
 
 2. Check that all the "pods" associated with your application are running:
 
    ```sh
-   kubectl get pods
+   minikube kubectl -- get pods
    ```
 
 In earlier steps, we set the `replicaCount` to `3`, so you should expect to see three `nodeserver-deployment-*` pods running.
@@ -448,7 +504,7 @@ Kubernetes has a concept of a 'Service', which is an abstract way to expose an a
 3. You can forward the `nodeserver-service` to your device by:
 
   ```sh
-  kubectl port-forward service/nodeserver-service 3000
+  minikube kubectl -- port-forward service/nodeserver-service 3000
   ```
 
 You can now access the application endpoints from your browser.
@@ -458,8 +514,8 @@ You can now access the application endpoints from your browser.
 Installing Prometheus into Kubernetes can be done using its provided Helm chart. This step needs to be done in a new Terminal window as you'll need to keep the application port-forwarded to `localhost:3000`.
 
   ```sh
-  kubectl create namespace prometheus
-  kubectl config set-context --current --namespace=prometheus
+  minikube kubectl -- create namespace prometheus
+  minikube kubectl -- config set-context --current --namespace=prometheus
   helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
   helm install prometheus prometheus-community/prometheus --namespace=prometheus
   ```
@@ -468,19 +524,19 @@ You can then run the following two commands in order to be able to connect to Pr
 
   On Linux and macOS:
   ```sh
-  export POD_NAME=$(kubectl get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace prometheus port-forward $POD_NAME 9090
+  export POD_NAME=$(minikube kubectl -- get pods --namespace prometheus -l "app=prometheus,component=server" -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace prometheus port-forward $POD_NAME 9090
   ```
 
   On Windows:
   ```
-  for /f "tokens=*" %i in ('"kubectl get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
-  kubectl --namespace prometheus port-forward %POD_NAME% 9090
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  minikube kubectl -- --namespace prometheus port-forward %POD_NAME% 9090
   ```
 
 This may fail with a warning about status being "Pending" until Prometheus has started, retry once the status is "Running" for all pods:
   ```sh
-  kubectl -n prometheus get pods --watch
+  minikube kubectl -- -n prometheus get pods --watch
   ```
 
 You can now connect to Prometheus at [http://localhost:9090](http://localhost:9090).
@@ -497,31 +553,6 @@ This will show a graph mapping the `nodejs_heap_size_used_bytes` across each of 
 
 ![Prometheus Graph](./images/prom_graph2.png)
 
-<details>
-<summary>microk8s only</summary>
-
-If you encounter a problem where there are no nodejs metrics in the **Expression** box, your Prometheus deployment may not be scraping metrics from the nodeserver. To check your microk8s cluster is setup ok run the following command:
-
-```sh
-microk8s.inspect
-```
-
-You may see the following warning
-
-```sh
-WARNING:  IPtables FORWARD policy is DROP. Consider enabling traffic forwarding with: sudo iptables -P FORWARD ACCEPT
-The change can be made persistent with: sudo apt-get install iptables-persistent
-```
-
-To fix this warning run the following command which will ensure packets sent to/from your pods can be forwarded. This change is also non-persistent.
-
-```sh
-sudo iptables -P FORWARD ACCEPT
-```
-
-More microk8s troubleshooting information can be found here: https://microk8s.io/docs/troubleshooting
-
-</details>
 
 Whilst Prometheus provides the ability to build simple graphs and alerts, Grafana is commonly used to build more sophisticated dashboards.
 
@@ -532,8 +563,8 @@ Installing Grafana into Kubernetes can be done using its provided Helm chart.
 In a third Terminal window:
 
 ```sh
-kubectl create namespace grafana
-kubectl config set-context --current --namespace=grafana
+minikube kubectl -- create namespace grafana
+minikube kubectl -- config set-context --current --namespace=grafana
 helm repo add grafana https://grafana.github.io/helm-charts
 helm install grafana grafana/grafana --set adminPassword=PASSWORD --namespace=grafana
 ```
@@ -542,8 +573,8 @@ You can then run the following two commands in order to be able to connect to Gr
 
   On Linux and macOS:
   ```sh
-  export POD_NAME=$(kubectl get pods --namespace grafana -o jsonpath="{.items[0].metadata.name}")
-  kubectl --namespace grafana port-forward $POD_NAME 3001:3000
+  export POD_NAME=$(minikube kubectl -- get pods --namespace grafana -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace grafana port-forward $POD_NAME 3001:3000
   ```
 
   On Windows:
