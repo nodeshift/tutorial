@@ -402,29 +402,41 @@ Add a Helm chart for your Express.js application using the following steps:
 
 1. Download the template Helm chart:
 
+   On Linux and macOS:
+
    ```sh
    curl -fsSL -o main.tar.gz https://github.com/NodeShift/helm/archive/main.tar.gz
    ```
 
+   On Windows:
+
+   Download: https://github.com/NodeShift/helm/archive/main.zip
+
 2. Untar the downloaded template chart:
+
+   On Linux and macOS:
 
    ```sh
    tar xfz main.tar.gz
    ```
+   On Windows:
+      * Right Click on `helm-main.zip` -> Extract All... -> Select the nodeserver directory -> Extract 
 
 3. Move the chart to your projects root directory:
 
    On Linux and macOS:
+
    ```sh
    mv helm-main/chart chart
    rm -rf helm-main main.tar.gz
    ```
 
-   On Windows:
+   On Windows (Command Prompt):
+
    ```
    move helm-main\chart chart
    rmdir /s /q helm-main
-   del main.tar.gz
+   del main.zip
    ```
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
