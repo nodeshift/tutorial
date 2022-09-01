@@ -122,30 +122,36 @@ Kubernetes 1.16, so make sure to run with 1.14.7.
 
 ### Installing Helm v3.7
 
-Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
+Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm by downloading the binary file and adding it to your PATH:
 
-**Using a Package Manager:**
+1. Download the binary file from the section **Installation and Upgrading** for Operating system accordingly.
 
-- macOS with Homebrew:
-  https://helm.sh/docs/intro/install/#from-homebrew-macos
-  ```
-   brew install helm
-  ```
-- Linux with Snap:
+   - https://github.com/helm/helm/releases/tag/v3.7.2
 
-  ```
-  sudo snap install --channel=3.7 helm --classic
-  ```
+1. Extract it:
 
-- Linux using a script:
+   - On Linux: `tar -zxvf helm-v3.7.2-*`
+   - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
+   - On Mac: //TODO
 
-  ```sh
-  $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-  $  chmod 700 get_helm.sh
-  $ DESIRED_VERSION=v3.7 ./get_helm.sh
-  ```
+1. Add helm binary file to your `PATH system variable`
+   On Linux:
 
-- Windows with Chocolatey: `choco install kubernetes-helm --version=3.7`
+   ```
+   cp `./<your-linux-distro>/helm` /usr/local/bin/
+   rm -rf ./<your-linux-distro>
+   ```
+
+   On Windows:
+
+   1. Move helm binary file to `C:\Program Files\helm`
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
+   1. Restart your computer for the changes to take effect.
+
+   On Mac:
+   //TODO
 
 ### 1. Create your Express.js Application
 
