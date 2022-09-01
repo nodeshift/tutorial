@@ -83,7 +83,6 @@ podman system connection default podman-machine-default-root
 1. start minikube
    ```
    minikube start --driver=podman --container-runtime=cri-o
-   eval $(minikube podman-env)
    ```
 
 #### On Windows:
