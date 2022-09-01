@@ -49,13 +49,21 @@ Before getting started, make sure you have the following prerequisites installed
 
 ### Starting Podman Machine
 
-#### On Mac/Linux:
+#### On Mac:
 
 After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
 ```
 podman machine init
 podman machine start
+```
+
+#### On Mac
+
+```
+podman machine init --cpus 2 --memory 4096 --disk-size 20
+podman machine start
+podman system connection default podman-machine-default-root
 ```
 
 #### On Windows
