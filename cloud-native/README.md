@@ -311,6 +311,7 @@ For this workshop, you'll use the `Dockerfile-run` template, which builds a prod
 
 Build a production Docker image for your Express.js application using the following steps:
 
+#### On Mac/Linux
 1. Copy the `Dockerfile-run` template into the root of your project:
 
    ```sh
@@ -337,6 +338,52 @@ You have now built a container image for your application called `nodeserver` wi
 
 This runs your container image in a Podman container, mapping port 3000 from the container to port 3000 on your laptop so that you can access the application.
 
+#### On Windows
+
+We will use Podman Desktop to build and run our image.
+1. Create a file called `Dockerfile-run` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
+
+1. Create another file called `.dockerignore` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
+
+1. Run Podman Desktop
+
+1. On Podman Desktop Click on Images (tab - left sidebar) -> Build Image
+
+   <details>
+   <summary>Available images (click to expand)</summary>
+
+   ![Available images](./images/podman_desktop_images.png)
+   </details>
+
+1. Set the containerfile path which in our case points to the Dockerfile-run and the image name `nodeserver` -> Build
+
+   <details>
+   <summary>Start building image (click to expand)</summary>
+
+   ![Build Image](./images/build_image_nodeserver.png)
+   </details>
+
+   <details>
+   <summary>Image build process (click to expand)</summary>
+
+   ![build process](./images/podman_build_image.png)
+   </details>
+
+1. After build process, on Images tab the nodeserver Image should be visible.
+
+   <details>
+   <summary>Final build image (click to expand)</summary>
+
+   ![nodeserver Image](./images/nodeserver_image.png)
+   </details>
+
+1. Hover over the container image -> click on the play button to run the image -> set ports 3000 and 8080 -> start container
+
+   <details>
+   <summary>Run image on port 3000 (click to expand)</summary>
+
+   ![nodeserver container](./images/run_nodeserver_container.png)
+   </details>
 Visit your applications endpoints to check that it is running successfully:
 
 * Homepage: [http://localhost:3000/](http://localhost:3000/)
