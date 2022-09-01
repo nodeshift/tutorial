@@ -78,10 +78,13 @@ podman system connection default podman-machine-default-root
 
 ### Starting Kubernetes
 
-#### On macOS: //TODO
+#### On macOS:
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+1. start minikube
+   ```
+   minikube start --driver=podman --container-runtime=cri-o
+   eval $(minikube podman-env)
+   ```
 
 #### On Windows:
 
@@ -115,7 +118,7 @@ podman system connection default podman-machine-default-root
 
 1. start minikube
    ```
-   minikube start --kubernetes-version=1.26.1 --driver=podman --container-runtime=cri-o
+   minikube start --driver=podman --container-runtime=cri-o
    eval $(minikube podman-env)
    ```
 
