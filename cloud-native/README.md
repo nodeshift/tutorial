@@ -50,16 +50,12 @@ Before getting started, make sure you have the following prerequisites installed
 ### Starting Podman Machine
 
 #### Linux
+
 Nothing to do, no Podman machine is required on Linux
 
-After installing podman, open a terminal and run below commands to initialize and run podman machine:
-
-```
-podman machine init
-podman machine start
-```
-
 #### On Mac
+
+After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
 ```
 podman machine init --cpus 2 --memory 4096 --disk-size 20
