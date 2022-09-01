@@ -58,7 +58,7 @@ Nothing to do, no Podman machine is required on Linux
 After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
 ```
-podman machine init --cpus 2 --memory 4096 --disk-size 20
+podman machine init --cpus 2 --memory 8096 --disk-size 20
 podman machine start
 podman system connection default podman-machine-default-root
 ```
