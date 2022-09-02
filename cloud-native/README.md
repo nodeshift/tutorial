@@ -78,7 +78,7 @@ podman system connection default podman-machine-default-root
 
 ### Starting Kubernetes
 
-#### On macOS:
+#### On Mac:
 
 1. start minikube
    ```
@@ -134,10 +134,10 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
    - On Linux: `tar -zxvf helm-v3.7.2-*`
    - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
-   - On Mac: //TODO
+   - On Mac: `tar -zxvf helm-v3.7.2-*`
 
 1. Add helm binary file to your `PATH system variable`
-   On Linux:
+   On Linux and Mac:
 
    ```
    cp `./<your-linux-distro>/helm` /usr/local/bin/
@@ -151,9 +151,6 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
    1. Restart your computer for the changes to take effect.
-
-   On Mac:
-   //TODO
 
 ### 1. Create your Express.js Application
 
