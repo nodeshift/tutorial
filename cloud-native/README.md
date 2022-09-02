@@ -106,7 +106,7 @@ podman system connection default podman-machine-default-root
    minikube start
    ```
 
-#### On linux
+#### On Linux
 
 1. Change minikube for starting podman rootless
    https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
@@ -120,7 +120,7 @@ podman system connection default podman-machine-default-root
    minikube start  --driver=podman --container-runtime=containerd
    ```
 2. Possible additional steps needed
-   * delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/)
+   * delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
 
 ### Installing Helm v3.7
 
