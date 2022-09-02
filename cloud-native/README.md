@@ -49,13 +49,18 @@ Before getting started, make sure you have the following prerequisites installed
 
 ### Starting Podman Machine
 
-#### On Mac/Linux:
+#### Linux
+
+Nothing to do, no Podman machine is required on Linux
+
+#### On Mac
 
 After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
 ```
-podman machine init
+podman machine init --cpus 2 --memory 8096 --disk-size 20
 podman machine start
+podman system connection default podman-machine-default-root
 ```
 
 #### On Windows
@@ -73,10 +78,12 @@ podman machine start
 
 ### Starting Kubernetes
 
-#### On macOS: //TODO
+#### On Mac:
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+1. start minikube
+   ```
+   minikube start --driver=podman --container-runtime=cri-o
+   ```
 
 #### On Windows:
 
@@ -99,7 +106,7 @@ podman machine start
    minikube start
    ```
 
-#### On linux
+#### On Linux
 
 1. Change minikube for starting podman rootless
    https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
@@ -110,9 +117,10 @@ podman machine start
 
 1. start minikube
    ```
-   minikube start --kubernetes-version=1.26.1 --driver=podman --container-runtime=cri-o
-   eval $(minikube podman-env)
+   minikube start  --driver=podman --container-runtime=containerd
    ```
+2. Possible additional steps needed
+   * delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
 
 ### Installing Helm v3.7
 
@@ -126,10 +134,10 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
    - On Linux: `tar -zxvf helm-v3.7.2-*`
    - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
-   - On Mac: //TODO
+   - On Mac: `tar -zxvf helm-v3.7.2-*`
 
 1. Add helm binary file to your `PATH system variable`
-   On Linux:
+   On Linux and Mac:
 
    ```
    cp `./<your-linux-distro>/helm` /usr/local/bin/
@@ -143,9 +151,6 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
    1. Restart your computer for the changes to take effect.
-
-   On Mac:
-   //TODO
 
 ### 1. Create your Express.js Application
 
@@ -579,8 +584,8 @@ You can then run the following two commands in order to be able to connect to Gr
 
   On Windows:
   ```
-  for /f "tokens=*" %i in ('"kubectl get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
-  kubectl --namespace grafana port-forward %POD_NAME% 3001:3000
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  minikube kubectl -- --namespace grafana port-forward %POD_NAME% 3001:3000
   ```
 
 You can now connect to Grafana at the following address, using `admin` and `PASSWORD` to login:
@@ -655,5 +660,5 @@ helm delete grafana -n grafana
 To change your Kubernetes context back to default use:
 
 ```sh
-kubectl config set-context --current --namespace=default
+minikube kubectl -- config set-context --current --namespace=default
 ```
