@@ -584,8 +584,8 @@ You can then run the following two commands in order to be able to connect to Gr
 
   On Windows:
   ```
-  for /f "tokens=*" %i in ('"kubectl get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
-  kubectl --namespace grafana port-forward %POD_NAME% 3001:3000
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
+  minikube kubectl -- --namespace grafana port-forward %POD_NAME% 3001:3000
   ```
 
 You can now connect to Grafana at the following address, using `admin` and `PASSWORD` to login:
@@ -660,5 +660,5 @@ helm delete grafana -n grafana
 To change your Kubernetes context back to default use:
 
 ```sh
-kubectl config set-context --current --namespace=default
+minikube kubectl -- config set-context --current --namespace=default
 ```
