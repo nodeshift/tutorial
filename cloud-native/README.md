@@ -67,7 +67,7 @@ podman system connection default podman-machine-default-root
 
 #### On Windows
 
-1. Launch Podman Desktop and on the home tab click on install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
+1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
 
 1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
 
@@ -93,9 +93,9 @@ podman system connection default podman-machine-default-root
 
 #### On Windows:
 
-1. Download minikube v1.26.1
+1. Download minikube
    ```
-   https://github.com/kubernetes/minikube/releases/download/v1.26.1/minikube-windows-amd64.exe
+   https://storage.googleapis.com/minikube/releases/latest/minikube-installer.exe
    ```
 1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
 1. Move minikube under `C:\Program Files\minikube` directory
