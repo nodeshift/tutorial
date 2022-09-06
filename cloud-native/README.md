@@ -485,32 +485,51 @@ minikube addons enable registry
 
 console output:
 ```console
+$ minikube addons enable registry
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                      │
+│    Registry addon with podman driver uses port 42795 please use that instead of default port 5000    │
+│                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────╯
+📘  For more information see: https://minikube.sigs.k8s.io/docs/drivers/podman
     ▪ Using image registry:2.7.1
     ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
+_Note: As the message indicates, be sure you use the correct port instead of 5000_
+
 We can now build the image directly using `minikube image build`:
 ```console
-$ minikube image build -t $(minikube ip):42631/nodeserver:1.0.0 --file Dockerfile-run .
+$ minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 And we can list the images in minikube:
+
+```
+minikube image ls
+```
+
+Console output
+
 ```console
-$ minikube image ls
 ...
 192.168.58.2:42631/nodeserver:1.0.0
 ...
 ```
 Next, we push the image into the registry using:
 ```console
-$ minikube image push $(minikube ip):42631/nodeserver
+minikube image push $(minikube ip):<port>/nodeserver
 ```
 
 Finally, we can install the Helm chart using:
+
 ```sh
 helm install nodeserver \
-  --set image.repository=$(minikube ip):42631/nodeserver  chart/nodeserver
+  --set image.repository=$(minikube ip):<port>/nodeserver  chart/nodeserver
 ```
+
+_**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_. 
+([Instructions Reference](https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac))
 
 2. Check that all the "pods" associated with your application are running:
 
@@ -536,12 +555,13 @@ You can now access the application endpoints from your browser.
 
 Installing Prometheus into Kubernetes can be done using its provided Helm chart. This step needs to be done in a new Terminal window as you'll need to keep the application port-forwarded to `localhost:3000`.
 
-  ```sh
-  minikube kubectl -- create namespace prometheus
-  minikube kubectl -- config set-context --current --namespace=prometheus
-  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-  helm install prometheus prometheus-community/prometheus --namespace=prometheus
-  ```
+```sh
+minikube kubectl -- create namespace prometheus
+minikube kubectl -- config set-context --current --namespace=prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus --namespace=prometheus
+```
 
 You can then run the following two commands in order to be able to connect to Prometheus from your browser:
 
