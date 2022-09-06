@@ -35,13 +35,13 @@ Before getting started, make sure you have the following prerequisites installed
    - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
    - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
 1. Podman Desktop
-   - **On Mac**: [Podman Desktop](hhttps://podman-desktop.io/docs/Installation/macos-install#3-install-podman-desktop-application-for-macos)
+   - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
    - **On Windows**: [Podman Desktop](https://podman-desktop.io/docs/Installation/windows-install)
    - **On Linux**: [Podman Desktop](https://podman-desktop.io/docs/Installation/linux-install)
 1. Kubernetes
-   - **On Mac**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-   - **On Windows**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-   - **On Linux**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Mac**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Windows**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Linux**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
 1. Helm v3 - [Installation](./README.md#installing-helm-v37)
    - **Note**: This workshop tested with Helm v3.7
 
@@ -56,6 +56,8 @@ Nothing to do, no Podman machine is required on Linux
 #### On Mac
 
 After installing podman, open a terminal and run below commands to initialize and run podman machine:
+
+_**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
 
 ```
 podman machine init --cpus 2 --memory 8096 --disk-size 20
@@ -80,6 +82,10 @@ podman system connection default podman-machine-default-root
 
 #### On Mac:
 
+1. install minikube
+   ```
+   brew install minikube
+   ```
 1. start minikube
    ```
    minikube start --driver=podman --container-runtime=cri-o
@@ -132,15 +138,22 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
 1. Extract it:
 
-   - On Linux: `tar -zxvf helm-v3.7.2-*`
+   - On Linux:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
    - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
-   - On Mac: `tar -zxvf helm-v3.7.2-*`
+   - On Mac:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
 
 1. Add helm binary file to your `PATH system variable`
+
    On Linux and Mac:
 
    ```
-   cp `./<your-linux-distro>/helm` /usr/local/bin/
+   cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
 
@@ -465,8 +478,13 @@ You will need to push the image into the kubernetes container registry so that
 minikube/microk8s can access it.
 
 First we enable the image registry addon for minikube:
+
+```
+minikube addons enable registry
+```
+
+console output:
 ```console
-$ minikube addons enable registry
     ▪ Using image registry:2.7.1
     ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
 🔎  Verifying registry addon...
