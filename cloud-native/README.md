@@ -501,7 +501,7 @@ _Note: As the message indicates, be sure you use the correct port instead of 500
 
 We can now build the image directly using `minikube image build`:
 ```console
-$ minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 And we can list the images in minikube:
 
