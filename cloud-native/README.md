@@ -651,9 +651,9 @@ Grafana now has access to the data from Prometheus.
 
 The Grafana community provides a large number of pre-created dashboards which are available for download, including some which are designed to display Kubernetes data.
 
-To install one of those dashboards, click on the `+` icon and select `Import`.
+To install one of those dashboards, expand the **Dashboards** menu on the left sidebard and click on the `+ Import`.
 
-In the provided panel, enter `1621` into the `Grafana.com Dashboard` field in order to import dashboard number 1621, and press `Load`.
+In the provided panel, enter `1621` into the `Import via Grafana.com` field in order to import dashboard number 1621, press `Load` and the `Import`.
 
 **Note**: If `1621` is not recognized, it may be necessary to download the JSON for [1621](https://grafana.com/grafana/dashboards/1621) (select `Download JSON`), and use `Upload JSON` in the Grafana UI.
 
