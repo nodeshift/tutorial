@@ -106,6 +106,7 @@ podman system connection default podman-machine-default-root
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
    1. Restart your computer for the changes to take effect.
+   1. Start Podman Desktop and click on run podman
 
 1. Start minikube by opening Powershell or Command Prompt and entering below command.
    ```
