@@ -82,10 +82,31 @@ podman system connection default podman-machine-default-root
 
 #### On Mac:
 
-1. install minikube
+1. Install Minikube
+
+   <details>
+      <summary>Download binary file (click to expand)</summary>
+
+      **x86-64**
+      ```
+      curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+      ```
+
+   **ARM64**
+
    ```
-   brew install minikube
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-arm64
    ```
+
+   </details>
+
+   Add minikube binary file to your `PATH system variable`
+
+   ```
+   chmod +x minikube-darwin-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
+
 1. start minikube
    ```
    minikube start --driver=podman --container-runtime=cri-o
@@ -95,7 +116,7 @@ podman system connection default podman-machine-default-root
 
 1. Download minikube
    ```
-   https://storage.googleapis.com/minikube/releases/latest/minikube-installer.exe
+   https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe
    ```
 1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
 1. Move minikube under `C:\Program Files\minikube` directory
