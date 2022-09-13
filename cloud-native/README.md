@@ -136,6 +136,49 @@ podman system connection default podman-machine-default-root
 
 #### On Linux
 
+1. Install Minikube
+
+   <details>
+      <summary>Download binary file (click to expand)</summary>
+
+      **x86-64**
+      ```
+      curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+      ```
+
+   **ARM64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm64
+   ```
+
+   **ARMv7**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm
+   ```
+
+   **ppc64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-ppc64le
+   ```
+
+   **S390x**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-s390x
+   ```
+
+   </details>
+
+   Add minikube binary file to your `PATH system variable`
+
+   ```
+   chmod +x minikube-linux-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
+
 1. Change minikube for starting podman rootless
    https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
 
