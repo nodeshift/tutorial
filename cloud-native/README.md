@@ -35,13 +35,13 @@ Before getting started, make sure you have the following prerequisites installed
    - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
    - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
 1. Podman Desktop
-   - **On Mac**: [Podman Desktop](hhttps://podman-desktop.io/docs/Installation/macos-install#3-install-podman-desktop-application-for-macos)
+   - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
    - **On Windows**: [Podman Desktop](https://podman-desktop.io/docs/Installation/windows-install)
    - **On Linux**: [Podman Desktop](https://podman-desktop.io/docs/Installation/linux-install)
 1. Kubernetes
-   - **On Mac**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-   - **On Windows**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-   - **On Linux**: [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+   - **On Mac**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Windows**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Linux**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
 1. Helm v3 - [Installation](./README.md#installing-helm-v37)
    - **Note**: This workshop tested with Helm v3.7
 
@@ -57,6 +57,8 @@ Nothing to do, no Podman machine is required on Linux
 
 After installing podman, open a terminal and run below commands to initialize and run podman machine:
 
+_**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
+
 ```
 podman machine init --cpus 2 --memory 8096 --disk-size 20
 podman machine start
@@ -65,7 +67,7 @@ podman system connection default podman-machine-default-root
 
 #### On Windows
 
-1. Launch Podman Desktop and on the home tab click on install podman. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
+1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
 
 1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
 
@@ -80,6 +82,31 @@ podman system connection default podman-machine-default-root
 
 #### On Mac:
 
+1. Install Minikube
+
+   <details>
+      <summary>Download binary file (click to expand)</summary>
+
+      **x86-64**
+      ```
+      curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+      ```
+
+   **ARM64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-arm64
+   ```
+
+   </details>
+
+   Add minikube binary file to your `PATH system variable`
+
+   ```
+   chmod +x minikube-darwin-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
+
 1. start minikube
    ```
    minikube start --driver=podman --container-runtime=cri-o
@@ -87,9 +114,9 @@ podman system connection default podman-machine-default-root
 
 #### On Windows:
 
-1. Download minikube v1.26.1
+1. Download minikube
    ```
-   https://github.com/kubernetes/minikube/releases/download/v1.26.1/minikube-windows-amd64.exe
+   https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe
    ```
 1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
 1. Move minikube under `C:\Program Files\minikube` directory
@@ -100,6 +127,7 @@ podman system connection default podman-machine-default-root
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
    1. Restart your computer for the changes to take effect.
+   1. Start Podman Desktop and click on run podman
 
 1. Start minikube by opening Powershell or Command Prompt and entering below command.
    ```
@@ -132,15 +160,22 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
 1. Extract it:
 
-   - On Linux: `tar -zxvf helm-v3.7.2-*`
+   - On Linux:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
    - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
-   - On Mac: `tar -zxvf helm-v3.7.2-*`
+   - On Mac:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
 
 1. Add helm binary file to your `PATH system variable`
+
    On Linux and Mac:
 
    ```
-   cp `./<your-linux-distro>/helm` /usr/local/bin/
+   cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
 
@@ -465,34 +500,58 @@ You will need to push the image into the kubernetes container registry so that
 minikube/microk8s can access it.
 
 First we enable the image registry addon for minikube:
+
+```
+minikube addons enable registry
+```
+
+console output:
 ```console
-$ minikube addons enable registry
+$ minikube addons enable registry
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                      │
+│    Registry addon with podman driver uses port 42795 please use that instead of default port 5000    │
+│                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────╯
+📘  For more information see: https://minikube.sigs.k8s.io/docs/drivers/podman
     ▪ Using image registry:2.7.1
     ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
+_Note: As the message indicates, be sure you use the correct port instead of 5000_
+
 We can now build the image directly using `minikube image build`:
 ```console
-$ minikube image build -t $(minikube ip):42631/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 And we can list the images in minikube:
+
+```
+minikube image ls
+```
+
+Console output
+
 ```console
-$ minikube image ls
 ...
 192.168.58.2:42631/nodeserver:1.0.0
 ...
 ```
 Next, we push the image into the registry using:
 ```console
-$ minikube image push $(minikube ip):42631/nodeserver
+minikube image push $(minikube ip):<port>/nodeserver
 ```
 
 Finally, we can install the Helm chart using:
+
 ```sh
 helm install nodeserver \
-  --set image.repository=$(minikube ip):42631/nodeserver  chart/nodeserver
+  --set image.repository=$(minikube ip):<port>/nodeserver  chart/nodeserver
 ```
+
+_**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_. 
+([Instructions Reference](https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac))
 
 2. Check that all the "pods" associated with your application are running:
 
@@ -518,12 +577,13 @@ You can now access the application endpoints from your browser.
 
 Installing Prometheus into Kubernetes can be done using its provided Helm chart. This step needs to be done in a new Terminal window as you'll need to keep the application port-forwarded to `localhost:3000`.
 
-  ```sh
-  minikube kubectl -- create namespace prometheus
-  minikube kubectl -- config set-context --current --namespace=prometheus
-  helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-  helm install prometheus prometheus-community/prometheus --namespace=prometheus
-  ```
+```sh
+minikube kubectl -- create namespace prometheus
+minikube kubectl -- config set-context --current --namespace=prometheus
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus prometheus-community/prometheus --namespace=prometheus
+```
 
 You can then run the following two commands in order to be able to connect to Prometheus from your browser:
 
@@ -613,9 +673,9 @@ Grafana now has access to the data from Prometheus.
 
 The Grafana community provides a large number of pre-created dashboards which are available for download, including some which are designed to display Kubernetes data.
 
-To install one of those dashboards, click on the `+` icon and select `Import`.
+To install one of those dashboards, expand the **Dashboards** menu on the left sidebard and click on the `+ Import`.
 
-In the provided panel, enter `1621` into the `Grafana.com Dashboard` field in order to import dashboard number 1621, and press `Load`.
+In the provided panel, enter `1621` into the `Import via Grafana.com` field in order to import dashboard number 1621, press `Load` and the `Import`.
 
 **Note**: If `1621` is not recognized, it may be necessary to download the JSON for [1621](https://grafana.com/grafana/dashboards/1621) (select `Download JSON`), and use `Upload JSON` in the Grafana UI.
 
