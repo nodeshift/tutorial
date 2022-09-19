@@ -563,13 +563,20 @@ $ minikube addons enable registry
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
-_Note: As the message indicates, be sure you use the correct port instead of 5000_
+_Note: As the message indicates, be sure you use the correct port instead of 5000_.
+On Linux and macOS export a variable with the registry with:
+
+```console
+export REGISTRY=$(minikube ip):<port>minikube addons enable registry
+```
+
+replacing <port> with the port listed when you ran `minikube addons enable registry`.
 
 We can now build the image directly using `minikube image build`:
 On Linux and macOS:
 
 ```console
-minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 On Windows:
@@ -581,7 +588,7 @@ minikube ip
 Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
 
 ```console
-minikube image build -t <minikube-ip>:<port>/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 And we can list the images in minikube:
@@ -603,7 +610,7 @@ Next, we push the image into the registry using:
 On Linux and macOS:
 
 ```console
-minikube image push $(minikube ip):<port>/nodeserver
+minikube image push $REGISTRY/nodeserver
 ```
 
 On Windows:
@@ -624,7 +631,7 @@ On Linux and macOS:
 
 ```sh
 helm install nodeserver \
-  --set image.repository=$(minikube ip):<port>/nodeserver  chart/nodeserver
+  --set image.repository=$REGISTRY/nodeserver  chart/nodeserver
 ```
 
 On Windows:
