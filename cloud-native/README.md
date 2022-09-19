@@ -220,7 +220,11 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
-
+   
+   If running on Mac results in a pop up indicating that the app could not be verified,
+   you will need to go to Apple menu > System Preferences, click Security & Privacy and
+   allow helm to run.
+   
    On Windows:
 
    1. Move helm binary file to `C:\Program Files\helm`
