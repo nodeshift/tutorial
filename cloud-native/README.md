@@ -517,7 +517,6 @@ Add a Helm chart for your Express.js application using the following steps:
    ```
    move helm-main\chart chart
    rmdir /s /q helm-main
-   del main.zip
    ```
 
 The provided Helm chart provides a number of configuration files, with the configurable values extracted into `chart/nodeserver/values.yaml`. In this file you provide the name of the Docker image to use, the number of replicas (instances) to deploy, etc.
@@ -563,9 +562,24 @@ $ minikube addons enable registry
 _Note: As the message indicates, be sure you use the correct port instead of 5000_
 
 We can now build the image directly using `minikube image build`:
+On Linux and macOS:
+
 ```console
 minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
 ```
+
+On Windows:
+
+```console
+minikube ip
+```
+
+Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
+
+```console
+minikube image build -t <minikube-ip>:<port>/nodeserver:1.0.0 --file Dockerfile-run .
+```
+
 And we can list the images in minikube:
 
 ```
@@ -579,19 +593,49 @@ Console output
 192.168.58.2:42631/nodeserver:1.0.0
 ...
 ```
+
 Next, we push the image into the registry using:
+
+On Linux and macOS:
+
 ```console
 minikube image push $(minikube ip):<port>/nodeserver
 ```
 
+On Windows:
+
+```console
+minikube ip
+```
+
+Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
+
+```console
+minikube image push <minikube ip>:<port>/nodeserver
+```
+
 Finally, we can install the Helm chart using:
+
+On Linux and macOS:
 
 ```sh
 helm install nodeserver \
   --set image.repository=$(minikube ip):<port>/nodeserver  chart/nodeserver
 ```
 
-_**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_. 
+On Windows:
+
+```console
+minikube ip
+```
+
+Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
+
+```sh
+helm install nodeserver --set image.repository=<minikube-ip>:<port>/nodeserver  chart/nodeserver
+```
+
+_**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_.
 ([Instructions Reference](https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac))
 
 2. Check that all the "pods" associated with your application are running:
@@ -634,7 +678,7 @@ You can then run the following two commands in order to be able to connect to Pr
   minikube kubectl -- --namespace prometheus port-forward $POD_NAME 9090
   ```
 
-  On Windows:
+  On Windows **Command Prompt**:
   ```
   for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace prometheus -l app=prometheus,component=server -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
   minikube kubectl -- --namespace prometheus port-forward %POD_NAME% 9090
@@ -683,7 +727,7 @@ You can then run the following two commands in order to be able to connect to Gr
   minikube kubectl -- --namespace grafana port-forward $POD_NAME 3001:3000
   ```
 
-  On Windows:
+  On Windows **Command Prompt**:
   ```
   for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace grafana -o jsonpath={.items[0].metadata.name}"') do set POD_NAME=%i
   minikube kubectl -- --namespace grafana port-forward %POD_NAME% 3001:3000
