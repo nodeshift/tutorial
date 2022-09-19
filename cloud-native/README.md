@@ -126,7 +126,6 @@ podman system connection default podman-machine-default-root
    1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
-   1. Restart your computer for the changes to take effect.
    1. Start Podman Desktop and click on run podman
 
 1. Start minikube by opening Powershell or Command Prompt and entering below command.
@@ -228,7 +227,6 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
    1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
-   1. Restart your computer for the changes to take effect.
 
 ### 1. Create your Express.js Application
 
