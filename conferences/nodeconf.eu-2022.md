@@ -14,7 +14,8 @@ This workshop provides an introduction to cloud native development with Node.js.
   * If possible please install the
     [prerequisites](https://github.com/nodeshift/tutorial/tree/main/cloud-native#prerequisites)
     in advance and complete associated [setup](https://github.com/nodeshift/tutorial/tree/main/cloud-native#setting-up).
-    This will reduce the load on the wifi and maximize the use of your time during the workshop itself.
+ This will reduce the load on the wifi and maximize the use of your time during the workshop itself.
+  *Note:* admin access is required to install a number of the prerequisites.
 
 * Tutorial
   * Self-paced workshop - [instructions](../cloud-native/README.md)
