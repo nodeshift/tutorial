@@ -29,7 +29,7 @@ This workshop provides an introduction to cloud native development with Node.js.
   * [Red Hat Node.js Topic Page](https://developers.redhat.com/topics/nodejs)
 
 ## Contacts
-  * Bethany Griggs - [Twitter](https://twitter.com/BethGriggs_)
-  * Lucas Holmquist - [Twitter](https://twitter.com/sienaluke)
-  * Michael Dawson - [Twitter](https://twitter.com/mhdawson1)
+  * Bethany Griggs
+  * Lucas Holmquist
+  * Michael Dawson
 
