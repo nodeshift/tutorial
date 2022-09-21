@@ -567,7 +567,7 @@ _Note: As the message indicates, be sure you use the correct port instead of 500
 On Linux and macOS export a variable with the registry with:
 
 ```console
-export REGISTRY=$(minikube ip):<port>minikube addons enable registry
+export MINIKUBE_REGISTRY=$(minikube ip):<port>minikube addons enable registry
 ```
 
 replacing <port> with the port listed when you ran `minikube addons enable registry`.
@@ -581,20 +581,20 @@ minikube ip
 to get the ip of the registry and then exporting
 
 ```
-set REGISTRY=<ip from minikube ip command above>:5000
+set MINIKUBE_REGISTRY=<ip from minikube ip command above>:5000
 ```
 
 We can now build the image directly using `minikube image build`:
 On Linux and macOS:
 
 ```console
-minikube image build -t $REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $MINIKUBE_REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 On Windows:
 
 ```console
-minikube image build -t $REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $MINIKUBE_REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 And we can list the images in minikube:
@@ -615,13 +615,13 @@ Next, we push the image into the registry using:
 On Linux and macOS:
 
 ```console
-minikube image push $REGISTRY/nodeserver
+minikube image push $MINIKUBE_REGISTRY/nodeserver
 ```
 
 On Windows:
 
 ```console
-minikube image push %REGISTRY%/nodeserver
+minikube image push %MINIKUBE_REGISTRY%/nodeserver
 ```
 
 Finally, we can install the Helm chart using:
@@ -630,13 +630,13 @@ On Linux and macOS:
 
 ```sh
 helm install nodeserver \
-  --set image.repository=$REGISTRY/nodeserver  chart/nodeserver
+  --set image.repository=$MINIKUBE_REGISTRY/nodeserver  chart/nodeserver
 ```
 
 On Windows:
 
 ```sh
-helm install nodeserver --set image.repository=%REGISTRY%/nodeserver  chart/nodeserver
+helm install nodeserver --set image.repository=%MINIKUBE_REGISTRY%/nodeserver  chart/nodeserver
 ```
 
 _**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_.
