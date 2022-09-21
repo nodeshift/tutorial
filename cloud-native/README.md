@@ -563,7 +563,9 @@ $ minikube addons enable registry
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
-_Note: As the message indicates, be sure you use the correct port instead of 5000_.
+_Note: As the message indicates, be sure you use the correct port instead of 5000_. If you
+don't see the warning then just use 5000 for the port in the instructions below.
+
 On Linux and macOS export a variable with the registry with:
 
 ```console
@@ -581,7 +583,7 @@ minikube ip
 to get the ip of the registry and then exporting
 
 ```
-set MINIKUBE_REGISTRY=<ip from minikube ip command above>:5000
+set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
 ```
 
 We can now build the image directly using `minikube image build`:
