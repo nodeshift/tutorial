@@ -596,7 +596,7 @@ minikube image build -t $MINIKUBE_REGISTRY/nodeserver:1.0.0 --file Dockerfile-ru
 On Windows:
 
 ```console
-minikube image build -t $MINIKUBE_REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t %MINIKUBE_REGISTRY%/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 And we can list the images in minikube:
