@@ -220,7 +220,11 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
-
+   
+   If running on Mac results in a pop up indicating that the app could not be verified,
+   you will need to go to Apple menu > System Preferences, click Security & Privacy and
+   allow helm to run.
+   
    On Windows:
 
    1. Move helm binary file to `C:\Program Files\helm`
@@ -559,25 +563,40 @@ $ minikube addons enable registry
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
-_Note: As the message indicates, be sure you use the correct port instead of 5000_
+_Note: As the message indicates, be sure you use the correct port instead of 5000_. If you
+don't see the warning then just use 5000 for the port in the instructions below.
+
+On Linux and macOS export a variable with the registry with:
+
+```console
+export MINIKUBE_REGISTRY=$(minikube ip):<port>minikube addons enable registry
+```
+
+replacing <port> with the port listed when you ran `minikube addons enable registry`.
+
+On Windows export a variable with the registry with by first running 
+
+```
+minikube ip
+```
+
+to get the ip of the registry and then exporting
+
+```
+set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
+```
 
 We can now build the image directly using `minikube image build`:
 On Linux and macOS:
 
 ```console
-minikube image build -t $(minikube ip):<port>/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t $MINIKUBE_REGISTRY/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 On Windows:
 
 ```console
-minikube ip
-```
-
-Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
-
-```console
-minikube image build -t <minikube-ip>:<port>/nodeserver:1.0.0 --file Dockerfile-run .
+minikube image build -t %MINIKUBE_REGISTRY%/nodeserver:1.0.0 --file Dockerfile-run .
 ```
 
 And we can list the images in minikube:
@@ -592,26 +611,19 @@ Console output
 ...
 192.168.58.2:42631/nodeserver:1.0.0
 ...
-```
 
 Next, we push the image into the registry using:
 
 On Linux and macOS:
 
 ```console
-minikube image push $(minikube ip):<port>/nodeserver
+minikube image push $MINIKUBE_REGISTRY/nodeserver
 ```
 
 On Windows:
 
 ```console
-minikube ip
-```
-
-Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
-
-```console
-minikube image push <minikube ip>:<port>/nodeserver
+minikube image push %MINIKUBE_REGISTRY%/nodeserver
 ```
 
 Finally, we can install the Helm chart using:
@@ -620,19 +632,13 @@ On Linux and macOS:
 
 ```sh
 helm install nodeserver \
-  --set image.repository=$(minikube ip):<port>/nodeserver  chart/nodeserver
+  --set image.repository=$MINIKUBE_REGISTRY/nodeserver  chart/nodeserver
 ```
 
 On Windows:
 
-```console
-minikube ip
-```
-
-Copy the output from `$minikube ip` and paste it on below command, replacing `<minikube-ip>` string
-
 ```sh
-helm install nodeserver --set image.repository=<minikube-ip>:<port>/nodeserver  chart/nodeserver
+helm install nodeserver --set image.repository=%MINIKUBE_REGISTRY%/nodeserver  chart/nodeserver
 ```
 
 _**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_.
