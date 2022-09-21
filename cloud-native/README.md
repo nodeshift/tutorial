@@ -569,7 +569,7 @@ don't see the warning then just use 5000 for the port in the instructions below.
 On Linux and macOS export a variable with the registry with:
 
 ```console
-export MINIKUBE_REGISTRY=$(minikube ip):<port>minikube addons enable registry
+export MINIKUBE_REGISTRY=$(minikube ip):<port>
 ```
 
 replacing <port> with the port listed when you ran `minikube addons enable registry`.
