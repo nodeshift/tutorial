@@ -601,16 +601,15 @@ minikube image build -t %MINIKUBE_REGISTRY%/nodeserver:1.0.0 --file Dockerfile-r
 
 And we can list the images in minikube:
 
-```
+```console
 minikube image ls
 ```
 
 Console output
 
 ```console
-...
 192.168.58.2:42631/nodeserver:1.0.0
-...
+```
 
 Next, we push the image into the registry using:
 
