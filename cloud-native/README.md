@@ -214,7 +214,7 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
 1. Add helm binary file to your `PATH system variable`
 
-   On Linux and Mac:
+   On Linux and Mac (sudo required for cp step on linux):
 
    ```
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
