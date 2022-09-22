@@ -214,7 +214,7 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
 1. Add helm binary file to your `PATH system variable`
 
-   On Linux and Mac:
+   On Linux and Mac (sudo required for cp step on linux):
 
    ```
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
@@ -569,7 +569,7 @@ don't see the warning then just use 5000 for the port in the instructions below.
 On Linux and macOS export a variable with the registry with:
 
 ```console
-export MINIKUBE_REGISTRY=$(minikube ip):<port>minikube addons enable registry
+export MINIKUBE_REGISTRY=$(minikube ip):<port>
 ```
 
 replacing <port> with the port listed when you ran `minikube addons enable registry`.
@@ -601,16 +601,15 @@ minikube image build -t %MINIKUBE_REGISTRY%/nodeserver:1.0.0 --file Dockerfile-r
 
 And we can list the images in minikube:
 
-```
+```console
 minikube image ls
 ```
 
 Console output
 
 ```console
-...
 192.168.58.2:42631/nodeserver:1.0.0
-...
+```
 
 Next, we push the image into the registry using:
 
