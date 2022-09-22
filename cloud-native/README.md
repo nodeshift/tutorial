@@ -563,7 +563,8 @@ $ minikube addons enable registry
 🔎  Verifying registry addon...
 🌟  The 'registry' addon is enabled
 ```
-_Note: As the message indicates, be sure you use the correct port instead of 5000_. If you
+
+_**Note**: As the message indicates, be sure you use the correct port instead of 5000_. If you
 don't see the warning then just use 5000 for the port in the instructions below.
 
 On Linux and macOS export a variable with the registry with:
@@ -781,16 +782,19 @@ This will then open the dashboard, which will automatically start populating wit
 
 ### Adding Custom Graphs
 
-In order to extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar and select `Graph`.
+In order to extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar
 
-On some Grafana versions, after you click `Add panel` in the toolbar, it is necessary to select `Choose Visualization` before selecting `Graph`.
+![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/add_panel_graphana_icon.png)
 
-This creates a blank graph. Select the `Panel Title` pull-down menu and select `Edit`.
+and select `Add new Panel`
+
+_**Note:**_ On some Grafana versions, after you click `Add panel` in the toolbar, it is necessary to select `Choose Visualization` before selecting `Graph`.
 
 This opens an editor panel where you can select data that you'd like to graph.
 
-Type `nodejs_heap_size_used_bytes` into the `Metrics` box, and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
+In the bottom half of the page, click on the Query tab, and validate that Data Source is set to Prometheus.
 
+Type `nodejs_heap_size_used_bytes` into the `Metrics` box, click on Run Queries button and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
 You now have integrated monitoring for both your Kubernetes cluster and your deployed Express.js application.
