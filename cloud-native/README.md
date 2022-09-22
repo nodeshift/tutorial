@@ -36,8 +36,8 @@ Before getting started, make sure you have the following prerequisites installed
    - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
 1. Podman Desktop
    - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
-   - **On Windows**: [Podman Desktop](https://podman-desktop.io/docs/Installation/windows-install)
-   - **On Linux**: [Podman Desktop](https://podman-desktop.io/docs/Installation/linux-install)
+   - **On Windows**: [Podman Desktop](https://podman-desktop.io/downloads/windows)
+   - **On Linux**: [Podman Desktop](https://podman-desktop.io/downloads/linux)
 1. Kubernetes
    - **On Mac**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
    - **On Windows**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
@@ -128,7 +128,7 @@ podman system connection default podman-machine-default-root
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
    1. Start Podman Desktop and click on run podman
 
-1. Start minikube by opening Powershell or Command Prompt and entering below command.
+1. Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
    ```
    minikube start
    ```
@@ -516,7 +516,7 @@ Add a Helm chart for your Express.js application using the following steps:
    rm -rf helm-main main.tar.gz
    ```
 
-   On Windows (Command Prompt):
+   On Windows **Command Prompt**:
 
    ```
    move helm-main\chart chart
@@ -541,7 +541,7 @@ Deploy your Express.js application into Kubernetes using the following steps:
 
 1. Create a local image registry  
 You will need to push the image into the kubernetes container registry so that
-minikube/microk8s can access it.
+minikube can access it.
 
 First we enable the image registry addon for minikube:
 
