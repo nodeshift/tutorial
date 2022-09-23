@@ -78,6 +78,19 @@ podman system connection default podman-machine-default-root
 1. On Podman Desktop Home tab -> click on **initialize Podman** -> wait till the initialization is finished
 1. On Podman Desktop Home tab -> click on **Run Podman** to run podman.
 
+#### On Windows **Home**
+
+1. Downlodad podman from https://github.com/containers/podman/releases the Windows installer file is named podman-v.#.#.#.msi
+1. Run the MSI file
+1. Launch as Administrator a new Command Prompt
+1. On the Command Prompt run:
+   ```
+   podman machine init
+   podman machine set --rootful
+   podman machine start
+   ```
+1. Launch Podman Desktop to see and manage your containers, images, etc.
+
 ### Starting Kubernetes
 
 #### On Mac:
@@ -128,9 +141,18 @@ podman system connection default podman-machine-default-root
    1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
    1. Start Podman Desktop and click on run podman
 
-1. Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
+1. Start minikube:
+
+   - For windows Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
+
    ```
    minikube start
+   ```
+
+   - For windows **Home** Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
+
+   ```
+   minikube start --driver=podman --container-runtime=containerd
    ```
 
 #### On Linux
