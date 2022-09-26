@@ -20,6 +20,7 @@ This workshop provides an introduction to cloud native development with Node.js.
 
 * Tutorial
   * Self-paced workshop - [instructions](../cloud-native/README.md)
+  * Introduction to Kube Service Bindings(Optional) - [instructions](https://github.com/nodeshift-blog-examples/kube-service-bindings-examples/tree/main/src/mongodb)
 
 ## Resources
   * [The Red Hat and IBM Node.js Reference architecture.](https://nodeshift.dev/nodejs-reference-architecture/)
