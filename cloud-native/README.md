@@ -117,7 +117,7 @@ podman system connection default podman-machine-default-root
 
    ```
    chmod +x minikube-darwin-*
-   mv minkube-linux-* /usr/local/bin/minikube
+   mv minikube-darwin-* /usr/local/bin/minikube
    ```
 
 1. start minikube
