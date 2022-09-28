@@ -21,7 +21,7 @@ In this self-paced tutorial you will:
 - Deploy your application to Kubernetes
 - Monitor your application using Prometheus
 
-The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Podman, Kubernetes, Prometheus, Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
+The application you'll use is a simple Express.js application. You'll learn about Health Checks, Metrics, Podman, Kubernetes, Prometheus, and Grafana. In the end, you'll have a fully functioning application running as a cluster in Kubernetes, with production monitoring.
 
 The content of this tutorial is based on recommendations from the [NodeShift Reference Architecture for Node.js](https://github.com/nodeshift/nodejs-reference-architecture).
 
@@ -29,10 +29,10 @@ The content of this tutorial is based on recommendations from the [NodeShift Ref
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for Linux, macOS or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for Windows)
 1. Podman v4 (and above)
    - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
-   - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
+   - **On Windows**: Skip this step, as for installing Podman you will get a prompt during Podman Desktop installation.
    - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
 1. Podman Desktop
    - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
@@ -55,9 +55,9 @@ Nothing to do, no Podman machine is required on Linux
 
 #### On Mac
 
-After installing podman, open a terminal and run below commands to initialize and run podman machine:
+After installing Podman, open a terminal and run the below commands to initialize and start the Podman machine:
 
-_**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
+_**NOTE:** \*On Apple M1 Pro chip, the system version has to be 12.4 and above._
 
 ```
 podman machine init --cpus 2 --memory 8096 --disk-size 20
@@ -67,9 +67,9 @@ podman system connection default podman-machine-default-root
 
 #### On Windows
 
-1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
+1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.g. WSL, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case, you might need to reboot your system several times.
 
-1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
+1. After installing podman, set WSL2 as your default WSL by entering the below command in PowerShell (with administration privileges).
 
    ```
    wsl --set-default-version 2
@@ -80,7 +80,7 @@ podman system connection default podman-machine-default-root
 
 #### On Windows **Home**
 
-1. Downlodad podman from https://github.com/containers/podman/releases the Windows installer file is named podman-v.#.#.#.msi
+1. Download Podman from https://github.com/containers/podman/releases the Windows installer file is named podman-v.#.#.#.msi
 1. Run the MSI file
 1. Launch as Administrator a new Command Prompt
 1. On the Command Prompt run:
@@ -143,7 +143,7 @@ podman system connection default podman-machine-default-root
 
 1. Start minikube:
 
-   - For windows Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
+   - For windows Start minikube by opening Powershell or Command Prompt **as administrator** and enter the following command:
 
    ```
    minikube start
@@ -209,16 +209,16 @@ podman system connection default podman-machine-default-root
 
 1. start minikube
    ```
-   minikube start  --driver=podman --container-runtime=containerd
+   minikube start --driver=podman --container-runtime=containerd
    ```
-2. Possible additional steps needed
-   * delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
+2. Possible additional steps needed:
+   * Delegation also needed on Ubuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
 
 ### Installing Helm v3.7
 
 Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm by downloading the binary file and adding it to your PATH:
 
-1. Download the binary file from the section **Installation and Upgrading** for Operating system accordingly.
+1. Download the binary file from the section **Installation and Upgrading** for your operating system.
 
    - https://github.com/helm/helm/releases/tag/v3.7.2
 
@@ -236,16 +236,14 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
 
 1. Add helm binary file to your `PATH system variable`
 
-   On Linux and Mac (sudo required for cp step on linux):
+   On Linux and Mac (`sudo` required for `cp` step on Linux):
 
    ```
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
    
-   If running on Mac results in a pop up indicating that the app could not be verified,
-   you will need to go to Apple menu > System Preferences, click Security & Privacy and
-   allow helm to run.
+   If running on macOS, a pop-up indicating that the application could not be verified may appear. You will need to go to Apple menu > System Preferences, click `Security & Privacy` and allow `helm` to run.
    
    On Windows:
 
@@ -326,9 +324,9 @@ Navigate to [http://localhost:3000](http://localhost:3000) and you should see th
 
 Kubernetes, and a number of other cloud deployment technologies, provide "Health Checking" as a system that allows the cloud deployment technology to monitor the deployed application and to take action should the application fail or report itself as "unhealthy".
 
-The simplest form of Health Check is process level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is unresponsive, or where it would be desirable to restart the application for other reasons.
+The simplest form of Health Check is process-level health checking, where Kubernetes checks to see if the application process still exists and restarts the container (and therefore the application process) if it is not. This provides a basic restart capability but does not handle scenarios where the application exists but is unresponsive, or where it would be desirable to restart the application for other reasons.a
 
-The next level of Health Check is HTTP based, where the application exposes a "livenessProbe" URL endpoint that Kubernetes can make requests of in order to determine whether the application is running and responsive. Additionally, the request can be used to drive self-checking capabilities in the application.
+The next level of Health Check is HTTP-based, where the application exposes a "livenessProbe" URL endpoint that Kubernetes can make requests to determine whether the application is running and responsive. Additionally, the request can be used to drive self-checking capabilities in the application.
 
 Add a Health Check endpoint to your Express.js application using the following steps:
 
@@ -338,7 +336,7 @@ Add a Health Check endpoint to your Express.js application using the following s
    app.get('/live', (req, res) => res.status(200).json({ status: 'ok' }));
    ```
 
- Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return as status code of 200 OK and a JSON payload of `{"status":"ok"}`.
+ Add this line after the `app.use(helmet());` line. This adds a `/live` endpoint to your application. As no liveness checks are registered, it will return a status code of 200 OK and a JSON payload of `{"status":"ok"}`.
 
 2. Restart your application:
 
@@ -376,7 +374,7 @@ Add a `/metrics` Prometheus endpoint to your Express.js application using the fo
    Prometheus.collectDefaultMetrics();
    ```
 
-    It is recommended to add these lines to around Line 3 below the `pino` logger import.
+    It is recommended to add these lines around Line 3 below the `pino` logger import.
 
 3. Register a `/metrics` route to serve the data on:
 
@@ -412,7 +410,7 @@ You can install a local Prometheus server to graph and visualize the data, and a
 
 Before you can deploy your application to Kubernetes, you first need to build your application into a container and produce a container image. This packages your application along with all of its dependencies in a ready-to-run format.
 
-NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides a number of Dockerfile templates that can be used to build your container and produce your image. The same file format can be used with Podman.
+NodeShift provides a "[Docker](https://github.com/NodeShift/docker)" project that provides several Dockerfile templates that can be used to build your container and produce your image. The same file format can be used with Podman.
 
 For this workshop, you'll use the `Dockerfile-run` template, which builds a production-ready Docker image for your application.
 
@@ -448,9 +446,9 @@ This runs your container image in a Podman container, mapping port 3000 from the
 #### On Windows
 
 We will use Podman Desktop to build and run our image.
-1. Create a file called `Dockerfile-run` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
+1. Create a file called `Dockerfile-run` and paste the content from the below URL: https://raw.githubusercontent.com/NodeShift/docker/master/Dockerfile-run
 
-1. Create another file called `.dockerignore` and paste content from below url: https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
+1. Create another file called `.dockerignore` and paste the content from the below URL: https://raw.githubusercontent.com/NodeShift/docker/master/.dockerignore
 
 1. Run Podman Desktop
 
@@ -462,7 +460,7 @@ We will use Podman Desktop to build and run our image.
    ![Available images](./images/podman_desktop_images.png)
    </details>
 
-1. Set the containerfile path which in our case points to the Dockerfile-run and the image name `nodeserver` -> Build
+1. Set the `containerfile` path which in our case points to the `Dockerfile-run` and the image name `nodeserver` -> Build
 
    <details>
    <summary>Start building image (click to expand)</summary>
@@ -476,7 +474,7 @@ We will use Podman Desktop to build and run our image.
    ![build process](./images/podman_build_image.png)
    </details>
 
-1. After build process, on Images tab the nodeserver Image should be visible.
+1. After the build process, on the `Images` tab the `nodeserver` Image should be visible.
 
    <details>
    <summary>Final build image (click to expand)</summary>
@@ -491,7 +489,7 @@ We will use Podman Desktop to build and run our image.
 
    ![nodeserver container](./images/run_nodeserver_container.png)
    </details>
-Visit your applications endpoints to check that it is running successfully:
+Visit your application's endpoints to check that it is running successfully:
 
 * Homepage: [http://localhost:3000/](http://localhost:3000/)
 * Liveness: [http://localhost:3000/health](http://localhost:3000/live)
@@ -499,7 +497,7 @@ Visit your applications endpoints to check that it is running successfully:
 
 ## 5. Packaging your Application with Helm
 
-In order to deploy your container image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which container image to use, how many replicas (instances) to deploy, and how much memory and CPU to provide to each.
+To deploy your container image to Kubernetes you need to supply Kubernetes with configuration on how you need your application to be run, including which container image to use, how many replicas (instances) to deploy, and how much memory and CPU to provide to each.
 
 Helm charts provide an easy way to package your application with this information.
 
@@ -562,10 +560,10 @@ Now that you have built a Helm chart for your application, the process for deplo
 Deploy your Express.js application into Kubernetes using the following steps:
 
 1. Create a local image registry  
-You will need to push the image into the kubernetes container registry so that
+You will need to push the image into the Kubernetes container registry so that
 minikube can access it.
 
-First we enable the image registry addon for minikube:
+First, we enable the image registry addon for minikube:
 
 ```
 minikube addons enable registry
@@ -597,13 +595,7 @@ export MINIKUBE_REGISTRY=$(minikube ip):<port>
 
 replacing <port> with the port listed when you ran `minikube addons enable registry`.
 
-On Windows export a variable with the registry with by first running 
-
-```
-minikube ip
-```
-
-to get the ip of the registry and then exporting
+On Windows, export a variable with the registry IP by first running `minikube ip` to get the IP of the registry and then exporting the variable:
 
 ```
 set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
@@ -663,7 +655,7 @@ On Windows:
 helm install nodeserver --set image.repository=%MINIKUBE_REGISTRY%/nodeserver  chart/nodeserver
 ```
 
-_**Note(Mac)**: In case you cant open helm cli to due Apple cannot check it for malicious software, be sure to control-click the helm app icon -> Open_.
+_**Note(Mac)**: If you cannot open the Helm CLI due Apple malicious software checks, control-click the Helm application icon in the Finder and select `Open`.
 ([Instructions Reference](https://support.apple.com/guide/mac-help/apple-cant-check-app-for-malicious-software-mchleab3a043/mac))
 
 2. Check that all the "pods" associated with your application are running:
@@ -698,7 +690,7 @@ helm repo update
 helm install prometheus prometheus-community/prometheus --namespace=prometheus
 ```
 
-You can then run the following two commands in order to be able to connect to Prometheus from your browser:
+You can then run the following two commands to be able to connect to Prometheus from your browser:
 
   On Linux and macOS:
   ```sh
@@ -712,7 +704,7 @@ You can then run the following two commands in order to be able to connect to Pr
   minikube kubectl -- --namespace prometheus port-forward %POD_NAME% 9090
   ```
 
-This may fail with a warning about status being "Pending" until Prometheus has started, retry once the status is "Running" for all pods:
+This may fail with a warning about the status being "Pending" until Prometheus has started, retry once the status is "Running" for all pods:
   ```sh
   minikube kubectl -- -n prometheus get pods --watch
   ```
@@ -747,7 +739,7 @@ helm repo add grafana https://grafana.github.io/helm-charts
 helm install grafana grafana/grafana --set adminPassword=PASSWORD --namespace=grafana
 ```
 
-You can then run the following two commands in order to be able to connect to Grafana from your browser:
+You can then run the following two commands to be able to connect to Grafana from your browser:
 
   On Linux and macOS:
   ```sh
@@ -769,7 +761,7 @@ This should show the following screen:
 
 ![Grafana home screen](./images/grafana_home.png)
 
-In order to connect Grafana to the Prometheus service, go to http://localhost:3001/datasources and click `Add Data Source`. Select `Prometheus`.
+To connect Grafana to the Prometheus service, go to http://localhost:3001/datasources and click `Add Data Source`. Select `Prometheus`.
 
 This opens a panel that should be filled out with the following entries:
 
@@ -786,9 +778,9 @@ Grafana now has access to the data from Prometheus.
 
 The Grafana community provides a large number of pre-created dashboards which are available for download, including some which are designed to display Kubernetes data.
 
-To install one of those dashboards, expand the **Dashboards** menu on the left sidebard and click on the `+ Import`.
+To install one of those dashboards, expand the **Dashboards** menu on the left sidebar and click on the `+ Import`.
 
-In the provided panel, enter `1621` into the `Import via Grafana.com` field in order to import dashboard number 1621, press `Load` and the `Import`.
+In the provided panel, enter `1621` into the `Import via Grafana.com` field to import dashboard number 1621, press `Load` and the `Import`.
 
 **Note**: If `1621` is not recognized, it may be necessary to download the JSON for [1621](https://grafana.com/grafana/dashboards/1621) (select `Download JSON`), and use `Upload JSON` in the Grafana UI.
 
@@ -804,7 +796,7 @@ This will then open the dashboard, which will automatically start populating wit
 
 ### Adding Custom Graphs
 
-In order to extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar
+To extend the dashboard with your own graphs, click the `Add panel` icon on the top toolbar
 
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/add_panel_graphana_icon.png)
 
@@ -816,7 +808,7 @@ This opens an editor panel where you can select data that you'd like to graph.
 
 In the bottom half of the page, click on the Query tab, and validate that Data Source is set to Prometheus.
 
-Type `nodejs_heap_size_used_bytes` into the `Metrics` box, click on Run Queries button and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
+Type `nodejs_heap_size_used_bytes` into the `Metrics` box, click on the Run Queries button and a graph of your application's process heap size used from Node.js will be shown. You may need to click the `Query` icon on the left to access the `Metrics` box.
 ![Grafana dashboard for `nodejs_heap_size_used_bytes` metric](./images/grafana_metric.png)
 
 You now have integrated monitoring for both your Kubernetes cluster and your deployed Express.js application.
