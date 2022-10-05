@@ -16,19 +16,21 @@ The application you will use is the one created from - https://github.com/nodesh
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Docker
-   - **_On Mac_**: [Docker Desktop](https://docs.docker.com/desktop/mac/install/)
-   - **_On Windows_**: [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
-   - **_On Linux_**: [Docker](https://docs.docker.com/engine/install/#server)
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Podman v4 (and above)
+   - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
+   - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
+   - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
+1. Podman Desktop
+   - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
+   - **On Windows**: [Podman Desktop](https://podman-desktop.io/downloads/windows)
+   - **On Linux**: [Podman Desktop](https://podman-desktop.io/downloads/linux)
 1. Kubernetes
-   - **_On Mac_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
-   - **_On Windows_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
-   - **_On Linux_**: Docker Desktop is not available on linux, hence you can enable Kubernetes by choosing one of below alternatives:
-     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-     - [microk8s](https://microk8s.io/#quick-start)
-1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.4.0
+   - **On Mac**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Windows**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Linux**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+1. Helm v3 - [Installation](./README.md#installing-helm-v37)
+   - **Note**: This workshop tested with Helm v3.7
 
 ## Setting up
 
