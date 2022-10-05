@@ -34,186 +34,216 @@ Before getting started, make sure you have the following prerequisites installed
 
 ## Setting up
 
-### Docker
+### Starting Podman Machine
 
-#### On linux
+#### Linux
 
-<details>
-Install Docker Engine Community using
+Nothing to do, no Podman machine is required on Linux
 
-```sh
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+#### On Mac
+
+After installing podman, open a terminal and run below commands to initialize and run podman machine:
+
+_**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
+
+```
+podman machine init --cpus 2 --memory 8096 --disk-size 20
+podman machine start
+podman system connection default podman-machine-default-root
 ```
 
-More information can be found at https://docs.docker.com/install/linux/docker-ce/ubuntu/
+#### On Windows
 
-Add the user to the docker group (optional for part 1, required for part 2 and 3)
+1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
 
-```sh
-sudo groupadd docker
-sudo usermod -aG docker $USER
-```
+1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
 
-Log out and log back in so that your group membership is re-evaluated.
+   ```
+   wsl --set-default-version 2
+   ```
 
-</details>
+1. On Podman Desktop Home tab -> click on **initialize Podman** -> wait till the initialization is finished
+1. On Podman Desktop Home tab -> click on **Run Podman** to run podman.
 
-### Kubernetes
+#### On Windows **Home**
 
-#### On macOS:
+1. Downlodad podman from https://github.com/containers/podman/releases the Windows installer file is named podman-v.#.#.#.msi
+1. Run the MSI file
+1. Launch as Administrator a new Command Prompt
+1. On the Command Prompt run:
+   ```
+   podman machine init
+   podman machine set --rootful
+   podman machine start
+   ```
+1. Launch Podman Desktop to see and manage your containers, images, etc.
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+### Starting Kubernetes
 
-Ensure you have installed Docker Desktop and enabled Kubernetes within the application. To do so:
+#### On Mac:
+
+1. Install Minikube
+
+   <details>
+      <summary>Download binary file (click to expand)</summary>
+
+   **x86-64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+   ```
+
+   **ARM64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-arm64
+   ```
+
+   </details>
+
+   Add minikube binary file to your `PATH system variable`
+
+   ```
+   chmod +x minikube-darwin-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
+
+1. start minikube
+   ```
+   minikube start --driver=podman --container-runtime=cri-o
+   ```
 
 #### On Windows:
 
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
+1. Download minikube
+   ```
+   https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe
+   ```
+1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
+1. Move minikube under `C:\Program Files\minikube` directory
 
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+1. Add `minikube.exe` binary to your `PATH system variable`
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
+   1. Start Podman Desktop and click on run podman
 
-#### On Linux:
+1. Start minikube:
 
-You can install Kubernetes choosing **one** of below options:
+   - For windows Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
 
-#### minikube
+   ```
+   minikube start
+   ```
 
-https://minikube.sigs.k8s.io/docs/start
+   - For windows **Home** Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
 
-<details>
+   ```
+   minikube start --driver=podman --container-runtime=containerd
+   ```
 
-```sh
-minikube start
-eval $(minikube docker-env)
-```
+#### On Linux
 
-</details>
+1. Install Minikube
 
-#### Microk8s
+   <details>
+      <summary>Download binary file (click to expand)</summary>
 
-https://microk8s.io/
+   **x86-64**
 
-<details>
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+   ```
 
-Follow below steps
+   **ARM64**
 
-1. Install microk8s through snap 
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm64
+   ```
 
-    <details>
-      <summary>Installation</summary>
+   **ARMv7**
 
-    ```sh
-    sudo snap install microk8s --classic
-    sudo usermod -a -G microk8s $USER
-    sudo chown -f -R $USER ~/.kube
-    ```
-    
-    After this, reload the user groups either via a reboot or by running 'newgrp microk8s'.
-    ```sh
-    microk8s status --wait-ready
-    microk8s enable dashboard dns registry istio
-    ```
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm
+   ```
 
-    Add an alias
-    ```sh
-    sudo snap alias microk8s.kubectl kubectl
-    ```
-    for further details please visit: https://microk8s.io
-    </details>
+   **ppc64**
 
-1. Enable pushing to insecure registry
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-ppc64le
+   ```
 
-    <details>
-    
-    Create file `/etc/docker/daemon.json` and add the following lines:
+   **S390x**
 
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-s390x
+   ```
 
-    ```
-    {
-        "insecure-registries" : ["localhost:32000"] 
-    }
-    ```
+   </details>
 
-    restart docker
+   Add minikube binary file to your `PATH system variable`
 
-    ```
-    sudo systemctl restart docker
-    ```
-    </details>
+   ```
+   chmod +x minikube-linux-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
 
+1. Change minikube for starting podman rootless
+   https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
 
-1. Enable private registry for Microk8s
+   ```
+   minikube config set rootless true
+   ```
 
-    *Use `microk8s ctr version` command to fetch Microk8s version*
+1. start minikube
 
-    <details>
-        <summary>Version 1.23 or newer</summary>
+   ```
+   minikube start  --driver=podman --container-runtime=containerd
+   ```
 
-    ```
-    sudo mkdir -p /var/snap/microk8s/current/args/certs.d/localhost:32000
-    sudo touch /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
-    ```
-    Then, edit the file we just created and make sure the contents are as follows:
+1. Possible additional steps needed
+   - delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
 
-    ```
-    # /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
-    server = "http://localhost:32000"
+### Installing Helm v3.7
 
-    [host."localhost:32000"]
-    capabilities = ["pull", "resolve"]
-    ```
+Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm by downloading the binary file and adding it to your PATH:
 
-    for further details please visit: https://microk8s.io/docs/registry-private on the **For MicroK8s version 1.23 or newer** section
-    </details>
+1. Download the binary file from the section **Installation and Upgrading** for Operating system accordingly.
 
-    <details>
-      <summary>Version 1.22 or older</summary>
+   - https://github.com/helm/helm/releases/tag/v3.7.2
 
-      We need to edit `/var/snap/microk8s/current/args/containerd-template.toml` and add the following under `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]`:
+1. Extract it:
 
-      ```
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:32000"]
-      endpoint = ["http://localhost:32000"]
-      ```
-    </details>
+   - On Linux:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
+   - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
+   - On Mac:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
 
-Restart MicroK8s to have the new configuration loaded:
-  ```sh
-  microk8s stop
-  microk8s start
-  microk8s kubectl config view --raw >~/.kube/config
-  ```
-</details>
+1. Add helm binary file to your `PATH system variable`
 
-### Helm
+   On Linux and Mac (sudo required for cp step on linux):
 
-Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
+   ```
+   cp `./<your-linux-distro>/helm` /usr/local/bin/helm
+   rm -rf ./<your-linux-distro>
+   ```
+   
+   If running on Mac results in a pop up indicating that the app could not be verified,
+   you will need to go to Apple menu > System Preferences, click Security & Privacy and
+   allow helm to run.
+   
+   On Windows:
 
-Choose one of the below section to install helm. For further information please visit https://helm.sh/docs/intro/install/
-#### Using a Package Manager:
-
-- macOS with Homebrew: `brew install helm`
-- Linux with Snap: `sudo snap install helm --classic`
-- Windows with Chocolatey: `choco install kubernetes-helm`
-
-#### Using microk8s:
-
-```sh
-$ microk8s.enable helm3
-```
-
-#### Using a Script:
-
-```sh
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ chmod 700 get_helm.sh
-$ ./get_helm.sh
-```
+   1. Move helm binary file to `C:\Program Files\helm`
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
 
 ## Downloading the application
 
