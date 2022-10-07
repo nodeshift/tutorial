@@ -233,11 +233,11 @@ Helm is a package manager for Kubernetes. By installing a Helm "chart" into your
    cp `./<your-linux-distro>/helm` /usr/local/bin/helm
    rm -rf ./<your-linux-distro>
    ```
-   
+
    If running on Mac results in a pop up indicating that the app could not be verified,
    you will need to go to Apple menu > System Preferences, click Security & Privacy and
    allow helm to run.
-   
+
    On Windows:
 
    1. Move helm binary file to `C:\Program Files\helm`
@@ -512,9 +512,8 @@ frontend:
     type: NodePort
     servicePort: 80 # the port where nginx serves its traffic
 ```
-These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
-In case of microk8s replace  `repository: frontend` with `repository: localhost:32000/frontend`
+These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
 ```yaml
 # backend
@@ -545,8 +544,6 @@ backend:
 
 These values are for the backend section. Here we pass through the image, tag, service information, and some mongoDB information to locate the instance.
 
-In case of microk8s replace  `repository: backend` with `repository: localhost:32000/backend`
-
 ```yaml
 # mongo
 mongodb:
@@ -558,10 +555,67 @@ mongodb:
       secondary: 3
   service:
     type: LoadBalancer
-
 ```
 
 Finally these values are passed through to the mongoDB chart we downloaded earlier.
+
+## 6. Deploying your Application to Kubernetes
+
+Now that you have built a Helm chart for your application, the process for deploying your application has been greatly simplified.
+
+Deploy your Express.js application into Kubernetes using the following steps:
+
+1. Create a local image registry  
+   You will need to push the image into the kubernetes container registry so that
+   minikube can access it.
+
+First we enable the image registry addon for minikube:
+
+```
+minikube addons enable registry
+```
+
+console output:
+
+```console
+$ minikube addons enable registry
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                      │
+│    Registry addon with podman driver uses port 42795 please use that instead of default port 5000    │
+│                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────╯
+📘  For more information see: https://minikube.sigs.k8s.io/docs/drivers/podman
+    ▪ Using image registry:2.7.1
+    ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
+🔎  Verifying registry addon...
+🌟  The 'registry' addon is enabled
+```
+
+_**Note**: As the message indicates, be sure you use the correct port instead of 5000_. If you
+don't see the warning then just use 5000 for the port in the instructions below.
+
+On Linux and macOS export a variable with the registry with:
+
+```console
+export MINIKUBE_REGISTRY=$(minikube ip):<port>
+```
+
+replacing <port> with the port listed when you ran `minikube addons enable registry`.
+
+On Windows export a variable with the registry with by first running
+
+```
+minikube ip
+```
+
+to get the ip of the registry and then exporting
+
+```
+set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
+```
+
+We can now build the image directly using `minikube image build`:
+On Linux and macOS:
 
 ### 6. Deploy your Helm Chart
 
