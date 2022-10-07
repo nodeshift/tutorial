@@ -284,52 +284,52 @@ This file works the same as any .ignore file, you just fill in the patterns you 
 
 ### 3. The Chart.yaml file
 
-   This file contains the base information about your Helm Chart, your premade one should look similar to this (with extra comments):
-   
-   ```yaml
-   apiVersion: v2
-   name: myapp
-   description: A Helm chart for Kubernetes
-   type: application
-   version: 0.1.0
-   appVersion: 1.0.0
-   ```
+This file contains the base information about your Helm Chart, your premade one should look similar to this (with extra comments):
 
-   `apiVersion: v2` signals that this chart is designed for Helm3 support _only_.
+```yaml
+apiVersion: v2
+name: myapp
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: 1.0.0
+```
 
-   `version` is the charts version, increment this under semver every time you update the chart
+`apiVersion: v2` signals that this chart is designed for Helm3 support _only_.
 
-   `appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version 
+`version` is the charts version, increment this under semver every time you update the chart
+
+`appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version
 
 The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
 
-   ```yaml
-   kubeVersion: '>= 1.21.0-0'
-   keywords:
-   - nodejs
-   - express
-   - mern
-   maintainers:
-   - name: Firstname Lastname
-     email: FirstnameLastname@company.com
-   ```
+```yaml
+kubeVersion: ">= 1.21.0-0"
+keywords:
+  - nodejs
+  - express
+  - mern
+maintainers:
+  - name: Firstname Lastname
+    email: FirstnameLastname@company.com
+```
 
 The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
 
-   ```yaml
-   dependencies:
-   - name: mongodb
-     version: 10.26.3
-     repository: https://charts.bitnami.com/bitnami
-   ```
+```yaml
+dependencies:
+  - name: mongodb
+    version: ">= 10.26.3"
+    repository: https://charts.bitnami.com/bitnami
+```
 
-   Then run the following command in the terminal to download the chart:
-   
-   ```sh
-   cd myapp
-   helm dependency update
-   cd ..
-   ```
+Then run the following command in the terminal to download the chart:
+
+```sh
+cd myapp
+helm dependency update
+cd ..
+```
 
 ### 4. Template files
 
