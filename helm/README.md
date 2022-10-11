@@ -401,7 +401,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        image: "{{ .Values.frontend.image.repository }}/{{ .Values.frontend.image.tag }}"
         imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
         livenessProbe:
           httpGet:
@@ -464,7 +464,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        image: "{{ .Values.backend.image.repository }}/{{ .Values.backend.image.tag }}"
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         livenessProbe:
           httpGet:
@@ -498,7 +498,7 @@ frontend:
   revisionHistoryLimit: 1
   image:
     repository: frontend 
-    tag: v1.0.0
+    tag: frontend:v1.0.0
     pullPolicy: IfNotPresent
     resources:
       requests:
@@ -522,7 +522,7 @@ backend:
   revisionHistoryLimit: 1
   image:
     repository: backend
-    tag: v1.0.0
+    tag: backend:v1.0.0
     pullPolicy: IfNotPresent
     resources:
       requests:
@@ -618,14 +618,18 @@ We can now build the image directly using `minikube image build`:
 On Linux and macOS:
 
 ```console
-minikube image build  -t $MINIKUBE_REGISTRY/backend:v1.0.0 --file Dockerfile  . 
+cd backend
+minikube image build  -t $MINIKUBE_REGISTRY/backend:v1.0.0 --file Dockerfile  .
+cd ../frontend
 minikube image build  -t $MINIKUBE_REGISTRY/frontend:v1.0.0 --file Dockerfile  .
 ```
 
 On Windows:
 
 ```console
+cd ../backend
 minikube image build -t %MINIKUBE_REGISTRY%/backend:v1.0.0 --file Dockerfile  .
+cd ../frontend
 minikube image build -t %MINIKUBE_REGISTRY%/frontend:v1.0.0 --file Dockerfile  .
 ```
 
@@ -662,8 +666,18 @@ minikube image push %MINIKUBE_REGISTRY%/frontend
 
 Once the images are built you can now deploy your helm chart
 
+*Validate you are in the mern-workshop directory*
+
+On Linux and macOS:
+
 ```sh
-$ helm install myapp chart/myapp
+$ helm install myapp  --set backend.image.repository=$MINIKUBE_REGISTRY --set frontend.image.repository=$MINIKUBE_REGISTRY chart/myapp
+```
+
+On Windows:
+
+```sh
+$ helm install myapp  --set backend.image.repository=%MINIKUBE_REGISTRY% --set frontend.image.repository=%MINIKUBE_REGISTRY% chart/myapp
 ```
 
 Check your pods are running by running:
@@ -692,7 +706,7 @@ you should get below message
 
 `Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
 
-You can then run the following two commands in order to be able to connect on the web app from your browser:
+You can then run the following two commands in order to forward 30555 port to your backend pod:
 
   On Linux and macOS:
   ```sh
@@ -706,7 +720,7 @@ You can then run the following two commands in order to be able to connect on th
   minikube kubectl -- --namespace default port-forward %BACKEND_POD_NAME% 30555:30555
   ```
 
-You can then run the following two commands in order to be able to connect on the web app from your browser:
+And by running the following two commands you are able to port forward your app on port 30444 on localhost:
 
   On Linux and macOS:
   ```sh
