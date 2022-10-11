@@ -696,13 +696,27 @@ You can then run the following two commands in order to be able to connect on th
 
   On Linux and macOS:
   ```sh
-  export FRONTEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[0].metadata.name}")
+  export BACKEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace default port-forward $BACKEND_POD_NAME 30555:30555
+  ```
+
+  On Windows **Command Prompt**:
+  ```
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[0].metadata.name}"') do set BACKEND_POD_NAME=%i
+  minikube kubectl -- --namespace default port-forward %BACKEND_POD_NAME% 30555:30555
+  ```
+
+You can then run the following two commands in order to be able to connect on the web app from your browser:
+
+  On Linux and macOS:
+  ```sh
+  export FRONTEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[1].metadata.name}")
   minikube kubectl -- --namespace default port-forward $FRONTEND_POD_NAME 30444:80
   ```
 
   On Windows **Command Prompt**:
   ```
-  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[0].metadata.name}"') do set FRONTEND_POD_NAME=%i
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[1].metadata.name}"') do set FRONTEND_POD_NAME=%i
   minikube kubectl -- --namespace default port-forward %FRONTEND_POD_NAME% 30444:80
   ```
 
