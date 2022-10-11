@@ -617,23 +617,48 @@ set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
 We can now build the image directly using `minikube image build`:
 On Linux and macOS:
 
+```console
+minikube image build  -t $MINIKUBE_REGISTRY/backend:v1.0.0 --file Dockerfile  . 
+minikube image build  -t $MINIKUBE_REGISTRY/frontend:v1.0.0 --file Dockerfile  .
+```
+
+On Windows:
+
+```console
+minikube image build -t %MINIKUBE_REGISTRY%/backend:v1.0.0 --file Dockerfile  .
+minikube image build -t %MINIKUBE_REGISTRY%/frontend:v1.0.0 --file Dockerfile  .
+```
+
+And we can list the images in minikube:
+
+```console
+minikube image ls
+```
+
+Console output
+
+```console
+<minikube-ip>:<minikube-registry-port>/frontend:v1.0.0
+<minikube-ip>:<minikube-registry-port>/backend:v1.0.0
+```
+
+Next, we push the image into the registry using:
+
+On Linux and macOS:
+
+```console
+minikube image push $MINIKUBE_REGISTRY/backend
+minikube image push $MINIKUBE_REGISTRY/frontend
+```
+
+On Windows:
+
+```console
+minikube image push %MINIKUBE_REGISTRY%/backend
+minikube image push %MINIKUBE_REGISTRY%/frontend
+```
+
 ### 6. Deploy your Helm Chart
-
-First we need to build our docker images to deploy, from the root directory of the project run:
-
-```sh
-$ docker build -f frontend/Dockerfile -t frontend:v1.0.0 frontend
-$ docker build -f backend/Dockerfile -t backend:v1.0.0 backend
-```
-or if you are using microk8s
-
-```sh
-$ docker build -f frontend/Dockerfile -t localhost:32000/frontend:v1.0.0 frontend
-$ docker build -f backend/Dockerfile -t localhost:32000/backend:v1.0.0 backend
-
-$ docker push localhost:32000/backend:v1.0.0
-$ docker push localhost:32000/frontend:v1.0.0
-```
 
 Once the images are built you can now deploy your helm chart
 
