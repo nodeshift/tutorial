@@ -371,8 +371,8 @@ spec:
   ports:
   - name: http
     port: {{ .Values.frontend.service.servicePort }}
-    nodePort: 30444
-  type: NodePort
+    nodePort: {{ .Values.frontend.service.nodePort }}
+  type: {{ .Values.frontend.service.type }}
   selector:
     app: "frontend-selector"
 ```
@@ -667,8 +667,21 @@ you should get below message
 
 `Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
 
+You can then run the following two commands in order to be able to connect on the web app from your browser:
 
-No you can access your application at `http://localhost:30444/`
+  On Linux and macOS:
+  ```sh
+  export FRONTEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace default port-forward $FRONTEND_POD_NAME 30444:80
+  ```
+
+  On Windows **Command Prompt**:
+  ```
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[0].metadata.name}"') do set FRONTEND_POD_NAME=%i
+  minikube kubectl -- --namespace default port-forward %FRONTEND_POD_NAME% 30444:80
+  ```
+
+Now you can access your application at `http://localhost:30444/`
 
 ### Congratulations! 🎉
 
