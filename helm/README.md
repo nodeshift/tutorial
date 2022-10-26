@@ -44,7 +44,7 @@ Nothing to do, no Podman machine is required on Linux
 
 After installing podman, open a terminal and run the below commands to initialize and run the podman machine:
 
-_**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
+_**NOTE:** \*On Apple M1 Pro chip, the system version has to be 12.4 and above._
 
 ```
 podman machine init --cpus 2 --memory 8096 --disk-size 20
