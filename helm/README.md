@@ -42,7 +42,7 @@ Nothing to do, no Podman machine is required on Linux
 
 #### On Mac
 
-After installing podman, open a terminal and run below commands to initialize and run podman machine:
+After installing podman, open a terminal and run the below commands to initialize and run the podman machine:
 
 _**NOTE:** \*On Apple M1 Pro chip, system version has to be 12.4 and above._
 
