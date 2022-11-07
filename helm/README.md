@@ -371,7 +371,7 @@ spec:
   ports:
   - name: http
     port: {{ .Values.frontend.service.servicePort }}
-    nodePort: {{ .Values.frontend.service.nodePort }}
+    nodePort: 30444
   type: {{ .Values.frontend.service.type }}
   selector:
     app: "frontend-selector"
