@@ -16,202 +16,234 @@ The application you will use is the one created from - https://github.com/nodesh
 
 Before getting started, make sure you have the following prerequisites installed on your system.
 
-1. Install [Node.js 14](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installation-and-update))
-1. Docker
-   - **_On Mac_**: [Docker Desktop](https://docs.docker.com/desktop/mac/install/)
-   - **_On Windows_**: [Docker Desktop](https://docs.docker.com/desktop/windows/install/)
-   - **_On Linux_**: [Docker](https://docs.docker.com/engine/install/#server)
+1. Install [Node.js 16](https://nodejs.org/en/download/) (or use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for linux, mac or [nvm-windows](https://github.com/coreybutler/nvm-windows#installation--upgrades) for windows)
+1. Podman v4 (and above)
+   - **On Mac**: [Podman](https://podman.io/getting-started/installation#macos)
+   - **On Windows**: Skip this step, as for installing Podman you will get prompt during Podman Desktop installation.
+   - **On Linux**: [Podman](https://podman.io/getting-started/installation#installing-on-linux)
+1. Podman Desktop
+   - **On Mac**: [Podman Desktop](https://podman-desktop.io/downloads/macOS)
+   - **On Windows**: [Podman Desktop](https://podman-desktop.io/downloads/windows)
+   - **On Linux**: [Podman Desktop](https://podman-desktop.io/downloads/linux)
 1. Kubernetes
-   - **_On Mac_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
-   - **_On Windows_**: [Kubernetes](https://docs.docker.com/desktop/kubernetes/#enable-kubernetes)
-   - **_On Linux_**: Docker Desktop is not available on linux, hence you can enable Kubernetes by choosing one of below alternatives:
-     - [minikube](https://kubernetes.io/docs/tasks/tools/install-minikube/)
-     - [microk8s](https://microk8s.io/#quick-start)
-1. Helm v3 - https://helm.sh/docs/intro/install/
-   - **Note**: This workshop tested with Helm v3.4.0
+   - **On Mac**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Windows**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+   - **On Linux**: [minikube](https://minikube.sigs.k8s.io/docs/start/)
+1. Helm v3 - [Installation](./README.md#installing-helm-v37)
+   - **Note**: This workshop tested with Helm v3.7
 
 ## Setting up
 
-### Docker
+### Starting Podman Machine
 
-#### On linux
+#### Linux
 
-<details>
-Install Docker Engine Community using
+Nothing to do, no Podman machine is required on Linux
 
-```sh
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+#### On Mac
+
+After installing podman, open a terminal and run the below commands to initialize and run the podman machine:
+
+_**NOTE:** \*On Apple M1 Pro chip, the system version has to be 12.4 and above._
+
+```
+podman machine init --cpus 2 --memory 8096 --disk-size 20
+podman machine start
+podman system connection default podman-machine-default-root
 ```
 
-More information can be found at https://docs.docker.com/install/linux/docker-ce/ubuntu/
+#### On Windows
 
-Add the user to the docker group (optional for part 1, required for part 2 and 3)
+1. Launch Podman Desktop and on the home tab click on **install podman**. In case of any missing parts for podman installation (e.x. wsl, hyper-v, etc.) follow the instructions indicated by Podman Desktop on the home page. In that case you might need to reboot your system several times.
 
-```sh
-sudo groupadd docker
-sudo usermod -aG docker $USER
-```
+1. After installing podman, set WSL2 as your default WSL by entering below command in PowerShell (with administration priviledges).
 
-Log out and log back in so that your group membership is re-evaluated.
+   ```
+   wsl --set-default-version 2
+   ```
 
-</details>
+1. On Podman Desktop Home tab -> click on **initialize Podman** -> wait till the initialization is finished
+1. On Podman Desktop Home tab -> click on **Run Podman** to run podman.
 
-### Kubernetes
+#### On Windows **Home**
 
-#### On macOS:
+1. Downlodad podman from https://github.com/containers/podman/releases the Windows installer file is named podman-v.#.#.#.msi
+1. Run the MSI file
+1. Launch as Administrator a new Command Prompt
+1. On the Command Prompt run:
+   ```
+   podman machine init
+   podman machine set --rootful
+   podman machine start
+   ```
+1. Launch Podman Desktop to see and manage your containers, images, etc.
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Preferences/Settings > Kubernetes > Enable Kubernetes`.
+### Starting Kubernetes
 
-Ensure you have installed Docker Desktop and enabled Kubernetes within the application. To do so:
+#### On Mac:
+
+1. Install Minikube
+
+   <details>
+      <summary>Download binary file (click to expand)</summary>
+
+   **x86-64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-amd64
+   ```
+
+   **ARM64**
+
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-darwin-arm64
+   ```
+
+   </details>
+
+   Add minikube binary file to your `PATH system variable`
+
+   ```
+   chmod +x minikube-darwin-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
+
+1. start minikube
+   ```
+   minikube start --driver=podman --container-runtime=cri-o
+   ```
 
 #### On Windows:
 
-1. Select the Docker icon in the notification area of the taskbar.
-2. Click `Settings > Kubernetes > Enable Kubernetes`.
+1. Download minikube
+   ```
+   https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe
+   ```
+1. Rename `minikube-windows-amd64.exe` to `minikube.exe`
+1. Move minikube under `C:\Program Files\minikube` directory
 
-It will take a few moments to install and start up. If you already use Kubernetes, ensure that you are configured to use the `docker-for-desktop` cluster. To do so:
+1. Add `minikube.exe` binary to your `PATH system variable`
 
-1. Select the Docker icon in the Menu Bar
-2. Click `Kubernetes` and select the `docker-for-desktop` context
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\minikube` -> click **OK** to save the changes to your variables
+   1. Start Podman Desktop and click on run podman
 
-#### On Linux:
+1. Start minikube:
 
-You can install Kubernetes choosing **one** of below options:
+   - For windows Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
 
-#### minikube
+   ```
+   minikube start
+   ```
 
-https://minikube.sigs.k8s.io/docs/start
+   - For windows **Home** Start minikube by opening Powershell or Command Prompt **as administrator** and enter below command.
 
-<details>
+   ```
+   minikube start --driver=podman --container-runtime=containerd
+   ```
 
-```sh
-minikube start
-eval $(minikube docker-env)
-```
+#### On Linux
 
-</details>
+1. Install Minikube
 
-#### Microk8s
+   <details>
+      <summary>Download binary file (click to expand)</summary>
 
-https://microk8s.io/
+   **x86-64**
 
-<details>
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+   ```
 
-Follow below steps
+   **ARM64**
 
-1. Install microk8s through snap 
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm64
+   ```
 
-    <details>
-      <summary>Installation</summary>
+   **ARMv7**
 
-    ```sh
-    sudo snap install microk8s --classic
-    sudo usermod -a -G microk8s $USER
-    sudo chown -f -R $USER ~/.kube
-    ```
-    
-    After this, reload the user groups either via a reboot or by running 'newgrp microk8s'.
-    ```sh
-    microk8s status --wait-ready
-    microk8s enable dashboard dns registry istio
-    ```
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm
+   ```
 
-    Add an alias
-    ```sh
-    sudo snap alias microk8s.kubectl kubectl
-    ```
-    for further details please visit: https://microk8s.io
-    </details>
+   **ppc64**
 
-1. Enable pushing to insecure registry
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-ppc64le
+   ```
 
-    <details>
-    
-    Create file `/etc/docker/daemon.json` and add the following lines:
+   **S390x**
 
+   ```
+   curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-s390x
+   ```
 
-    ```
-    {
-        "insecure-registries" : ["localhost:32000"] 
-    }
-    ```
+   </details>
 
-    restart docker
+   Add minikube binary file to your `PATH system variable`
 
-    ```
-    sudo systemctl restart docker
-    ```
-    </details>
+   ```
+   chmod +x minikube-linux-*
+   mv minkube-linux-* /usr/local/bin/minikube
+   ```
 
+1. Change minikube for starting podman rootless
+   https://minikube.sigs.k8s.io/docs/drivers/podman/#rootless-podman
 
-1. Enable private registry for Microk8s
+   ```
+   minikube config set rootless true
+   ```
 
-    *Use `microk8s ctr version` command to fetch Microk8s version*
+1. start minikube
 
-    <details>
-        <summary>Version 1.23 or newer</summary>
+   ```
+   minikube start  --driver=podman --container-runtime=containerd
+   ```
 
-    ```
-    sudo mkdir -p /var/snap/microk8s/current/args/certs.d/localhost:32000
-    sudo touch /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
-    ```
-    Then, edit the file we just created and make sure the contents are as follows:
+1. Possible additional steps needed
+   - delegation also needed on Unbuntu 2022 - https://rootlesscontaine.rs/getting-started/common/cgroup2/
 
-    ```
-    # /var/snap/microk8s/current/args/certs.d/localhost:32000/hosts.toml
-    server = "http://localhost:32000"
+### Installing Helm v3.7
 
-    [host."localhost:32000"]
-    capabilities = ["pull", "resolve"]
-    ```
+Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm by downloading the binary file and adding it to your PATH:
 
-    for further details please visit: https://microk8s.io/docs/registry-private on the **For MicroK8s version 1.23 or newer** section
-    </details>
+1. Download the binary file from the section **Installation and Upgrading** for Operating system accordingly.
 
-    <details>
-      <summary>Version 1.22 or older</summary>
+   - https://github.com/helm/helm/releases/tag/v3.7.2
 
-      We need to edit `/var/snap/microk8s/current/args/containerd-template.toml` and add the following under `[plugins."io.containerd.grpc.v1.cri".registry.mirrors]`:
+1. Extract it:
 
-      ```
-      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:32000"]
-      endpoint = ["http://localhost:32000"]
-      ```
-    </details>
+   - On Linux:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
+   - On Windows: **Right Click** on `helm-v3.7.2-windows-amd64` zipped file -> **Extract All** -> **Extract**
+   - On Mac:
+     ```
+     tar -zxvf helm-v3.7.2-*
+     ```
 
-Restart MicroK8s to have the new configuration loaded:
-  ```sh
-  microk8s stop
-  microk8s start
-  microk8s kubectl config view --raw >~/.kube/config
-  ```
-</details>
+1. Add helm binary file to your `PATH system variable`
 
-### Helm
+   On Linux and Mac (sudo required for cp step on linux):
 
-Helm is a package manager for Kubernetes. By installing a Helm "chart" into your Kubernetes cluster you can quickly run all kinds of different applications. You can install Helm using one of the options below:
+   ```
+   cp `./<your-linux-distro>/helm` /usr/local/bin/helm
+   rm -rf ./<your-linux-distro>
+   ```
 
-Choose one of the below section to install helm. For further information please visit https://helm.sh/docs/intro/install/
-#### Using a Package Manager:
+   If running on Mac results in a pop up indicating that the app could not be verified,
+   you will need to go to Apple menu > System Preferences, click Security & Privacy and
+   allow helm to run.
 
-- macOS with Homebrew: `brew install helm`
-- Linux with Snap: `sudo snap install helm --classic`
-- Windows with Chocolatey: `choco install kubernetes-helm`
+   On Windows:
 
-#### Using microk8s:
-
-```sh
-$ microk8s.enable helm3
-```
-
-#### Using a Script:
-
-```sh
-$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
-$ chmod 700 get_helm.sh
-$ ./get_helm.sh
-```
+   1. Move helm binary file to `C:\Program Files\helm`
+   1. Right-click on the **Start Button** -> Select **System** from the context menu -> click on **Advanced system settings**
+   1. Go to the **Advanced** tab -> click on **Environment Variables** -> click the variable called **Path** -> **Edit**
+   1. Click **New** -> Enter the path to the folder containing the binary e.x. `C:\Program Files\helm` -> click **OK** to save the changes to your variables
 
 ## Downloading the application
 
@@ -252,52 +284,52 @@ This file works the same as any .ignore file, you just fill in the patterns you 
 
 ### 3. The Chart.yaml file
 
-   This file contains the base information about your Helm Chart, your premade one should look similar to this (with extra comments):
-   
-   ```yaml
-   apiVersion: v2
-   name: myapp
-   description: A Helm chart for Kubernetes
-   type: application
-   version: 0.1.0
-   appVersion: 1.0.0
-   ```
+This file contains the base information about your Helm Chart, your premade one should look similar to this (with extra comments):
 
-   `apiVersion: v2` signals that this chart is designed for Helm3 support _only_.
+```yaml
+apiVersion: v2
+name: myapp
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: 1.0.0
+```
 
-   `version` is the charts version, increment this under semver every time you update the chart
+`apiVersion: v2` signals that this chart is designed for Helm3 support _only_.
 
-   `appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version 
+`version` is the charts version, increment this under semver every time you update the chart
+
+`appVersion` is the version of the app you are deploying, this is to be increased every time you increase the version of your app but does not impact the charts version
 
 The rest of the fields are self explanatory but lets add some more information to describe our chart. We are going to set a Kubernetes minimum version, add some descriptive keywords and add our name as Maintainers. So go ahead and add the following to your `Chart.yaml` whilst subsituting your name and email in:
 
-   ```yaml
-   kubeVersion: '>= 1.21.0-0'
-   keywords:
-   - nodejs
-   - express
-   - mern
-   maintainers:
-   - name: Firstname Lastname
-     email: FirstnameLastname@company.com
-   ```
+```yaml
+kubeVersion: ">= 1.21.0-0"
+keywords:
+  - nodejs
+  - express
+  - mern
+maintainers:
+  - name: Firstname Lastname
+    email: FirstnameLastname@company.com
+```
 
 The final key thing we are going to add is a dependency, our application needs mongoDB to run so we are going to call an existing mongo chart to install mongo as we install our chart. Firstly we need to add to our `Chart.yaml`:
 
-   ```yaml
-   dependencies:
-   - name: mongodb
-     version: 10.26.3
-     repository: https://charts.bitnami.com/bitnami
-   ```
+```yaml
+dependencies:
+  - name: mongodb
+    version: ">= 10.26.3"
+    repository: https://charts.bitnami.com/bitnami
+```
 
-   Then run the following command in the terminal to download the chart:
-   
-   ```sh
-   cd myapp
-   helm dependency update
-   cd ..
-   ```
+Then run the following command in the terminal to download the chart:
+
+```sh
+cd myapp
+helm dependency update
+cd ..
+```
 
 ### 4. Template files
 
@@ -340,7 +372,7 @@ spec:
   - name: http
     port: {{ .Values.frontend.service.servicePort }}
     nodePort: 30444
-  type: NodePort
+  type: {{ .Values.frontend.service.type }}
   selector:
     app: "frontend-selector"
 ```
@@ -369,7 +401,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+        image: "{{ .Values.frontend.image.repository }}/{{ .Values.frontend.image.tag }}"
         imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
         livenessProbe:
           httpGet:
@@ -432,7 +464,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        image: "{{ .Values.backend.image.repository }}/{{ .Values.backend.image.tag }}"
         imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
         livenessProbe:
           httpGet:
@@ -466,7 +498,7 @@ frontend:
   revisionHistoryLimit: 1
   image:
     repository: frontend 
-    tag: v1.0.0
+    tag: frontend:v1.0.0
     pullPolicy: IfNotPresent
     resources:
       requests:
@@ -480,9 +512,8 @@ frontend:
     type: NodePort
     servicePort: 80 # the port where nginx serves its traffic
 ```
-These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
-In case of microk8s replace  `repository: frontend` with `repository: localhost:32000/frontend`
+These values are for the frontend section. Here we pass through the image name, tag and the values for the frontend service.
 
 ```yaml
 # backend
@@ -491,7 +522,7 @@ backend:
   revisionHistoryLimit: 1
   image:
     repository: backend
-    tag: v1.0.0
+    tag: backend:v1.0.0
     pullPolicy: IfNotPresent
     resources:
       requests:
@@ -513,8 +544,6 @@ backend:
 
 These values are for the backend section. Here we pass through the image, tag, service information, and some mongoDB information to locate the instance.
 
-In case of microk8s replace  `repository: backend` with `repository: localhost:32000/backend`
-
 ```yaml
 # mongo
 mongodb:
@@ -526,33 +555,129 @@ mongodb:
       secondary: 3
   service:
     type: LoadBalancer
-
 ```
 
 Finally these values are passed through to the mongoDB chart we downloaded earlier.
 
+## 6. Deploying your Application to Kubernetes
+
+Now that you have built a Helm chart for your application, the process for deploying your application has been greatly simplified.
+
+Deploy your Express.js application into Kubernetes using the following steps:
+
+1. Create a local image registry  
+   You will need to push the image into the kubernetes container registry so that
+   minikube can access it.
+
+First we enable the image registry addon for minikube:
+
+```
+minikube addons enable registry
+```
+
+console output:
+
+```console
+$ minikube addons enable registry
+╭──────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                                                                                                      │
+│    Registry addon with podman driver uses port 42795 please use that instead of default port 5000    │
+│                                                                                                      │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────╯
+📘  For more information see: https://minikube.sigs.k8s.io/docs/drivers/podman
+    ▪ Using image registry:2.7.1
+    ▪ Using image gcr.io/google_containers/kube-registry-proxy:0.4
+🔎  Verifying registry addon...
+🌟  The 'registry' addon is enabled
+```
+
+_**Note**: As the message indicates, be sure you use the correct port instead of 5000_. If you
+don't see the warning then just use 5000 for the port in the instructions below.
+
+On Linux and macOS export a variable with the registry with:
+
+```console
+export MINIKUBE_REGISTRY=$(minikube ip):<port>
+```
+
+replacing <port> with the port listed when you ran `minikube addons enable registry`.
+
+On Windows export a variable with the registry with by first running
+
+```
+minikube ip
+```
+
+to get the ip of the registry and then exporting
+
+```
+set MINIKUBE_REGISTRY=<ip from minikube ip command above>:<port>
+```
+
+We can now build the image directly using `minikube image build`:
+On Linux and macOS:
+
+```console
+cd backend
+minikube image build  -t $MINIKUBE_REGISTRY/backend:v1.0.0 --file Dockerfile  .
+cd ../frontend
+minikube image build  -t $MINIKUBE_REGISTRY/frontend:v1.0.0 --file Dockerfile  .
+```
+
+On Windows:
+
+```console
+cd ../backend
+minikube image build -t %MINIKUBE_REGISTRY%/backend:v1.0.0 --file Dockerfile  .
+cd ../frontend
+minikube image build -t %MINIKUBE_REGISTRY%/frontend:v1.0.0 --file Dockerfile  .
+```
+
+And we can list the images in minikube:
+
+```console
+minikube image ls
+```
+
+Console output
+
+```console
+<minikube-ip>:<minikube-registry-port>/frontend:v1.0.0
+<minikube-ip>:<minikube-registry-port>/backend:v1.0.0
+```
+
+Next, we push the image into the registry using:
+
+On Linux and macOS:
+
+```console
+minikube image push $MINIKUBE_REGISTRY/backend
+minikube image push $MINIKUBE_REGISTRY/frontend
+```
+
+On Windows:
+
+```console
+minikube image push %MINIKUBE_REGISTRY%/backend
+minikube image push %MINIKUBE_REGISTRY%/frontend
+```
+
 ### 6. Deploy your Helm Chart
-
-First we need to build our docker images to deploy, from the root directory of the project run:
-
-```sh
-$ docker build -f frontend/Dockerfile -t frontend:v1.0.0 frontend
-$ docker build -f backend/Dockerfile -t backend:v1.0.0 backend
-```
-or if you are using microk8s
-
-```sh
-$ docker build -f frontend/Dockerfile -t localhost:32000/frontend:v1.0.0 frontend
-$ docker build -f backend/Dockerfile -t localhost:32000/backend:v1.0.0 backend
-
-$ docker push localhost:32000/backend:v1.0.0
-$ docker push localhost:32000/frontend:v1.0.0
-```
 
 Once the images are built you can now deploy your helm chart
 
+*Validate you are in the mern-workshop directory*
+
+On Linux and macOS:
+
 ```sh
-$ helm install myapp chart/myapp
+$ helm install myapp  --set backend.image.repository=$MINIKUBE_REGISTRY --set frontend.image.repository=$MINIKUBE_REGISTRY chart/myapp
+```
+
+On Windows:
+
+```sh
+$ helm install myapp  --set backend.image.repository=%MINIKUBE_REGISTRY% --set frontend.image.repository=%MINIKUBE_REGISTRY% chart/myapp
 ```
 
 Check your pods are running by running:
@@ -581,8 +706,35 @@ you should get below message
 
 `Connection is established with mongodb, details: mongodb://myapp-mongodb:27017`
 
+You can then run the following two commands in order to forward 30555 port to your backend pod:
 
-No you can access your application at `http://localhost:30444/`
+  On Linux and macOS:
+  ```sh
+  export BACKEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[0].metadata.name}")
+  minikube kubectl -- --namespace default port-forward $BACKEND_POD_NAME 30555:30555
+  ```
+
+  On Windows **Command Prompt**:
+  ```
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[0].metadata.name}"') do set BACKEND_POD_NAME=%i
+  minikube kubectl -- --namespace default port-forward %BACKEND_POD_NAME% 30555:30555
+  ```
+
+And by running the following two commands you are able to port forward your app on port 30444 on localhost:
+
+  On Linux and macOS:
+  ```sh
+  export FRONTEND_POD_NAME=$(minikube kubectl -- get pods --namespace default -o jsonpath="{.items[1].metadata.name}")
+  minikube kubectl -- --namespace default port-forward $FRONTEND_POD_NAME 30444:80
+  ```
+
+  On Windows **Command Prompt**:
+  ```
+  for /f "tokens=*" %i in ('"minikube kubectl -- get pods --namespace default -o jsonpath={.items[1].metadata.name}"') do set FRONTEND_POD_NAME=%i
+  minikube kubectl -- --namespace default port-forward %FRONTEND_POD_NAME% 30444:80
+  ```
+
+Now you can access your application at `http://localhost:30444/`
 
 ### Congratulations! 🎉
 
